@@ -1,0 +1,106 @@
+/* Admin styles for the hotscot contact form WP plugin */
+#hcf_left{
+	width: 200px;
+	float: left;
+}
+
+#hcf_right{
+	width: 780px;
+	float: left;
+}
+
+#hcf_form_list{
+	list-style-type: none;
+}
+
+#hcf_form_list li a,
+#hcf_form_list li a:visited{
+	color: #21759B;
+	font-weight: bold;
+	font-size: 13px;
+	text-decoration: none;
+	outline-color: #21759B;
+}
+
+#hcf_form_list li a:hover,
+#hcf_form_list li a:active{
+	color: #D54E21;
+	outline-color: #D54E21;
+}
+
+/* Wordpress core overrides */
+.widefat td input {
+	margin: 0 0 0 0px;
+	padding: 6px;
+	vertical-align: text-top;
+}
+
+.widefat td input[type="checkbox"]{
+	margin-left: 8px;
+}
+
+h3.box-header{
+	padding: 7px 10px;
+	cursor: default !important;
+}
+
+h3.box-header small{
+	color: #ABABAB;
+	font-size: 11px;
+	text-transform: uppercase;
+	font-family: sans-serif;
+}
+
+table#control-list td.actions span{
+	display: none;
+}
+
+table#control-list,
+table#form-elements{
+	width: 100%;
+}
+
+table#control-list td,
+table#form-elements td{
+	cursor: move;
+	min-height: 18px;
+}
+
+tr.ui-state-highlight{
+	height: 18px;
+	background-color: red;
+}
+
+span.trash a{
+	color: #BC0B0B;
+}
+
+span.trash a:hover{
+	color: red;
+}
+
+
+.hcf-hidden{
+	display: none;
+}
+
+.hcf-wrap .postbox-container .postbox{
+	width: 48.5%;
+	margin: 0 16px 20px 0px;
+}
+
+.hcf-wrap #control-box,
+.hcf-wrap #form-box{
+	min-width: 420px;
+}
+
+
+#field-box{
+	background-color: #F1F1F1;
+	padding: 10px 20px;
+	margin-bottom: 10px;
+}
+
+input#fieldselect{
+	margin: 20px 16px;
+}
