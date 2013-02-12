@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.1
+Stable tag: 0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ n/a
 == Screenshots ==
 n/a
 == Changelog ==
-n/a
+0.1 - initial build
+0.2 - added dashboard widget
 == Upgrade Notice ==
-n/a
+added dashboard widget

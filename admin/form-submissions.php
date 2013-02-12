@@ -63,91 +63,6 @@
 
 	    hcf_redirect_backtobase($url . "&amp;msg=deletedmultiple");
 	}
-
-
-	/**
-	 * takes a form submission and creates a readable string out of it
-	 *
-	 * will cut off submission after a number of chars
-	 *
-	 * @param str $strippedSubmission - JSON submission (stripped slashed)
-	 * @return str $formattedSubmission - nice submission i.e "Name: john, Email: john@hotsc..."
-	 */
-	function html_format_submission($strippedSubmission, $firstOnly = false, $charCutoff = 100){
-		$formattedSubmission = '';
-
-		$formFields = json_decode($strippedSubmission);
-
-		$fieldCount = 0;
-
-		foreach ($formFields as $k => $v) {
-			if($k != 'captchacode'){
-				if(! ($v == '' || $v == '-1')){
-					//Special consideration for checkbox values
-					if(is_array($v)){
-						$arrStr = '';
-						foreach ($v as $av) {
-							$arrStr .= "$av, ";
-						}
-						//Remove ', ' from end
-						if(strlen($arrStr) > 2) $arrStr = substr($arrStr, 0,-2);
-
-						//If first only, we just want the value not the key
-						if($firstOnly){
-							$formattedSubmission .= $arrStr . ", ";
-						}else{ //take it all
-							$formattedSubmission .= '<strong>' . ucfirst($k) . "</strong>: " . $arrStr . ", ";
-						}
-					}else{
-						//If first only, we just want the value not the key
-						if($firstOnly){
-							$formattedSubmission .= $v . ", ";
-						}else{ //take it all
-							$formattedSubmission .= '<strong>' . ucfirst($k) . "</strong>: " . $v . ", ";
-						}
-					}
-				}
-
-				if($firstOnly && ++$fieldCount) break;
-			}
-		}
-
-		//Get rid of the last ", "
-		$formattedSubmission = substr($formattedSubmission, 0, -2);
-
-		$returnStr = '';
-		if($firstOnly){
-			return $formattedSubmission;
-		}else{
-			return substr($formattedSubmission, 0, $charCutoff) . "...";
-		}
-	}
-
-	/**
-	 * returns a comma seperated list of form fields for that form
-	 *
-	 * @param int $formID - the form Id
-	 * @return str $fieldList - unique list of all submission fields
-	 */
-	function get_form_submission_fields($formID){
-		global $wpdb;
-
-		$fieldList = array();
-		$tableName = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
-		$query = "SELECT submission FROM $tableName WHERE form_id = $formID ORDER BY date_submitted DESC";
-		$res = $wpdb->get_results($query);
-
-		if($res){
-			foreach ($res as $row) {
-				foreach (json_decode(stripslashes($row->submission)) as $k => $v) {
-
-					if(!in_array($k, $fieldList)) $fieldList[] = "$k";
-				}
-			}
-		}
-
-		return $fieldList;
-	}
 ?>
 
 <div class="wrap">
@@ -200,7 +115,7 @@
         <div id="field-box" style="display:none;">
         	<h3>Pick Fields</h3>
 		<?php
-			$fieldAr = get_form_submission_fields($_GET['view_form_sub_id']);
+			$fieldAr = hcf_get_form_submission_fields($_GET['view_form_sub_id']);
 			foreach($fieldAr as $fa){
 				echo '<label><input type="checkbox" name="fields" checked="checked" value="' . $fa . '"/> ' . $fa . '</label><br/>';
 			}
@@ -223,9 +138,9 @@
 					<tr>
 						<td><input type="checkbox" class="massdelete" name="selected[]" value="<?php echo $submission->id; ?>"></td>
 						<td><?php echo date('d/m/Y H:i', strtotime($submission->date_submitted)); ?></td>
-						<td><?php echo html_format_submission(stripslashes($submission->submission), $firstOnly = true); ?>
+						<td><?php echo hcf_html_format_submission(stripslashes($submission->submission), $firstOnly = true); ?>
 						</td>
-						<td><?php echo html_format_submission(stripslashes($submission->submission), $firstOnly = false); ?></td>
+						<td><?php echo hcf_html_format_submission(stripslashes($submission->submission), $firstOnly = false); ?></td>
 						<td align="right">
 							<a href="<?php echo $url; ?>&amp;sub_id=<?php echo $submission->id; ?>">View</a>&nbsp;&nbsp;|&nbsp;
 						    <a href="Javascript:del_itm(<?php echo $submission->id; ?>)">Delete</a>

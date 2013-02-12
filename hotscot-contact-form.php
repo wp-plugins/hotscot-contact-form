@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
 Description: Simple to use contact form
-Version: 0.1
+Version: 0.2
 Author: Huntly Cameron
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -61,6 +61,8 @@ add_shortcode('hcf-form', 'hcf_display_form');
 remove_filter('template_redirect', 'redirect_canonical');
 add_action('template_redirect', 'redirect_custom_urls');
 
+//Dashboard setup
+add_action('wp_dashboard_setup', 'hcf_add_dashboard_widget');
 
 session_start();
 
@@ -118,6 +120,46 @@ function hcf_plugin_install(){
 }
 
 /**
+ * Sets up the main wp admin dashboard widget
+ *
+ * @return void
+ */
+function hcf_add_dashboard_widget(){
+	wp_add_dashboard_widget('hcf_latest_posts', 'Latest Form Submissions', 'hcf_dashboard_widget');
+}
+
+/**
+ * This function is executed when our widget is initialized
+ *
+ * @return void
+ */
+function hcf_dashboard_widget(){
+	global $wpdb;
+	$form_table_name = $wpdb->prefix . HCF_FORM_TABLE_NAME;
+    $entry_table_name = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
+
+	$query = "SELECT e.id as sub_id, e.date_submitted, e.submission, f.name, f.id as form_id FROM $entry_table_name as e LEFT JOIN $form_table_name as f on e.form_id = f.id ORDER BY date_submitted DESC LIMIT 5";
+
+	$subs = $wpdb->get_results($query);
+
+	if($subs):?>
+		<table style="width: 100%">
+			<tr>
+				<th>Date</th><th>Title</th><th>Form</th>
+			</tr>
+			<?php foreach ($subs as $sub): ?>
+			<tr>
+				<td><?php echo $sub->date_submitted; ?></td>
+				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>&sub_id=<?php echo $sub->sub_id; ?>"><?php echo hcf_html_format_submission(stripslashes($sub->submission), true); ?></td>
+				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>"><?php echo $sub->name; ?></td>
+
+			</tr>
+			<?php endforeach; ?>
+		</table>
+	<?php endif;
+}
+
+/**
  * Redirects to a given url - a bit kludgy, but works
  *
  * @param url - url to redirect to
@@ -136,6 +178,91 @@ function hcf_redirect_backtobase($url){
    <?php
    exit();
 }
+
+/**
+ * takes a form submission and creates a readable string out of it
+ *
+ * will cut off submission after a number of chars
+ *
+ * @param str $strippedSubmission - JSON submission (stripped slashed)
+ * @return str $formattedSubmission - nice submission i.e "Name: john, Email: john@hotsc..."
+ */
+function hcf_html_format_submission($strippedSubmission, $firstOnly = false, $charCutoff = 100){
+	$formattedSubmission = '';
+
+	$formFields = json_decode($strippedSubmission);
+
+	$fieldCount = 0;
+
+	foreach ($formFields as $k => $v) {
+		if($k != 'captchacode'){
+			if(! ($v == '' || $v == '-1')){
+				//Special consideration for checkbox values
+				if(is_array($v)){
+					$arrStr = '';
+					foreach ($v as $av) {
+						$arrStr .= "$av, ";
+					}
+					//Remove ', ' from end
+					if(strlen($arrStr) > 2) $arrStr = substr($arrStr, 0,-2);
+
+					//If first only, we just want the value not the key
+					if($firstOnly){
+						$formattedSubmission .= $arrStr . ", ";
+					}else{ //take it all
+						$formattedSubmission .= '<strong>' . ucfirst($k) . "</strong>: " . $arrStr . ", ";
+					}
+				}else{
+					//If first only, we just want the value not the key
+					if($firstOnly){
+						$formattedSubmission .= $v . ", ";
+					}else{ //take it all
+						$formattedSubmission .= '<strong>' . ucfirst($k) . "</strong>: " . $v . ", ";
+					}
+				}
+			}
+
+			if($firstOnly && ++$fieldCount) break;
+		}
+	}
+
+	//Get rid of the last ", "
+	$formattedSubmission = substr($formattedSubmission, 0, -2);
+
+	$returnStr = '';
+	if($firstOnly){
+		return $formattedSubmission;
+	}else{
+		return substr($formattedSubmission, 0, $charCutoff) . "...";
+	}
+}
+
+/**
+ * returns a comma seperated list of form fields for that form
+ *
+ * @param int $formID - the form Id
+ * @return str $fieldList - unique list of all submission fields
+ */
+function hcf_get_form_submission_fields($formID){
+	global $wpdb;
+
+	$fieldList = array();
+	$tableName = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
+	$query = "SELECT submission FROM $tableName WHERE form_id = $formID ORDER BY date_submitted DESC";
+	$res = $wpdb->get_results($query);
+
+	if($res){
+		foreach ($res as $row) {
+			foreach (json_decode(stripslashes($row->submission)) as $k => $v) {
+
+				if(!in_array($k, $fieldList)) $fieldList[] = "$k";
+			}
+		}
+	}
+
+	return $fieldList;
+}
+
 
 /**
  * prints out the form element

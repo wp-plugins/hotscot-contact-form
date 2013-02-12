@@ -21,6 +21,10 @@ $ownerTemplate = '';
 $ownerEmail = '';
 $data = '';
 $thankspage = '';
+$clientHeaders = '';
+$ownerHeaders = '';
+$clientUseHTMLEmail = false;
+$ownerUseHTMLEmail = false;
 
 //form submitted
 if(isset($_GET['edit_id']) && isset($_POST["frm-sbmt"])){
