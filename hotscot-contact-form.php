@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Hotscot Contact Form
-Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
+Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.2
-Author: Huntly Cameron
+Version: 0.3
+Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
 */
@@ -275,34 +275,34 @@ function hcf_displayFormElement($formElement){
 
 	switch ($formElement->elementType) {
 		case 'text':
-			$html .= '<label> ' . $formElement->elementName . '<input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
+			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ': <input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
 			break;
 		case 'email':
 
 			if($formElement->sendFormToThisAddress){
 				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '"/>';
 			}
-			$html .= '<label> ' . $formElement->elementName . '<input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
+			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ': <input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
 			break;
 		case 'submit':
 			if($formElement->useCaptcha){
-				$html .= '<label>CAPTCHA <input type="text" name="captchacode" id="captchacode" /></label><br/>';
+				$html .= '<label class="hcf-label hcf-label-checkbox">Code: <input type="text" name="captchacode" id="captchacode" /></label><br/>';
 				$html .= '<img src="'. get_bloginfo( 'url') . '/HCF_CAPTCHA/" alt="captcha_img" /><br/>';
 			}
-			$html .= '<label> ' . $formElement->elementName . '<input type="submit" class="' . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . ' value="' . (($formElement->elementValue != '') ?  $formElement->elementValue : '' ) . '"/></label><br/>';
+			$html .= '<input type="submit" class="' . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . ' value="' . (($formElement->elementValue != '') ?  $formElement->elementValue : '' ) . '"/><br/>';
 			break;
 		case 'checkbox':
 			if(strpos($formElement->elementOptions, ',')){
 				$options = explode(',', $formElement->elementOptions);
 				foreach($options as $option){
-					$html .= '<label> ' . $option . '<input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '" value="' . $option . '"/></label><br/>';
+					$html .= '<label class="hcf-label hcf-label-checkbox">' . $option . ' <input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '" value="' . $option . '"/></label><br/>';
 				}
 			}elseif($formElement->elementOptions != ''){
-				$html .= '<label> ' . $formElement->elementOptions . '<input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '"/></label><br/>';
+				$html .= '<label class="hcf-label hcf-label-checkbox">' . $formElement->elementOptions . ' <input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '"/></label><br/>';
 			}
 			break;
 		case 'select':
-				$html .= '<label> ' . $formElement->elementName . '<select name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_select' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '>';
+				$html .= '<label class="hcf-label hcf-label-select">' . $formElement->elementName . ': <select name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_select' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '>';
 				$html .= '<option value="-1">Please Select...</option>';
 				if(strpos($formElement->elementOptions, ',')){
 					$options = explode(',', $formElement->elementOptions);
@@ -316,7 +316,7 @@ function hcf_displayFormElement($formElement){
 				$html .= "</select></label><br/>";
 			break;
 		case 'textarea':
-				$html .= '<label> ' . $formElement->elementName . '</label><br/><textarea name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '></textarea><br/>';
+				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label><textarea name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '></textarea><br/>';
 			break;
 	}
 
@@ -576,7 +576,7 @@ function hcf_add_form_picker_button($context){
 	$img = plugins_url( 'images/icon.png' , __FILE__ );
 
 
-  	$title = 'Pick your Form';
+  	$title = 'Which form do you want to embed?';
 
   	//append the icon
   	$button = "<a href='#TB_inline?width=400&inlineId=popup_container'
@@ -585,15 +585,20 @@ function hcf_add_form_picker_button($context){
 
     $formPopup  =
     	'<div id="popup_container" style="display:none;">
-  		 	 <h2>What form do you want to use?!</h2>';
+  		 	 <h2>What form do you want to use?</h2>';
 
   	$formCount = 0;
-  	foreach($savedForms as $form){
 
-  		$formPopup  .= '<label><input type="radio" style="margin-bottom: 10px" name="formselect" value="' . $form->id . '" ' . ((++$formCount == 1) ? 'checked="checked"' : '') . '/>' .  stripslashes($form->name) . '</label><br/>';
-  	}
+  	if($savedForms){
+	  	foreach($savedForms as $form){
 
-  	$formPopup .= '<button id="hcf-form-selector" class="button-primary"/>Embed Form</button>';
+	  		$formPopup  .= '<label><input type="radio" style="margin-bottom: 10px" name="formselect" value="' . $form->id . '" ' . ((++$formCount == 1) ? 'checked="checked"' : '') . '/>' .  stripslashes($form->name) . '</label><br/>';
+	  	}
+
+	  	$formPopup .= '<button id="hcf-form-selector" class="button-primary"/>Embed Form</button>';
+	}else{
+		$formPopup .= '<p>No contact forms exist</p>';
+	}
 	$formPopup .= '</div>';
 
 	return $context . $button . $formPopup;

@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.2
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,14 +18,32 @@ Simple contact form supporting easy form creation / customization. Saves enquiri
 
 1. Extract to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Profit
+1. Use the Contact Form menu to create your form
 
 == Frequently Asked Questions ==
-n/a
+
+= What's the "headers" section in the Email Templates =
+
+Here you can use the standard email headers accepted by the php mail() function like "BCC: person@place.net" and so on.  If you're not sure about what you're doing, leave it blank.  This is an advanced feature.
+
+
 == Screenshots ==
 n/a
 == Changelog ==
-0.1 - initial build
-0.2 - added dashboard widget
+
+= 0.1 =
+* initial build
+
+= 0.2 =
+* added dashboard widget
+
+= 0.3 =
+*added classes to main output for easier styling and fixed labels
+
 == Upgrade Notice ==
-added dashboard widget
+
+= 0.2 =
+Added dashboard widget
+
+= 0.3 =
+easier styleing thanks to classes
