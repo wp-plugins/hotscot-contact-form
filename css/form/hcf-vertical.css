@@ -1,0 +1,34 @@
+/* Basic styles for the Vertical form */
+.hcf-form input[type="text"],
+.hcf-form input[type="submit"],
+.hcf-form input[type="button"],
+.hcf-form select{
+	padding: 6px;
+}
+
+.hcf-form input[type="submit"]{
+	margin-bottom: 17px;
+}
+
+.hcf-form .hcf-label{
+	display: block;
+
+}
+
+.hcf-form div.hcf-clear{
+	clear: both;
+	margin-bottom: 10px;
+}
+
+.hcf-form .hcf-label-textarea{
+	display: block !important;
+}
+
+.hcf-form img.hcf-captcha{
+	display: block;
+	float: left;
+}
+
+.hcf-form .hcf-captcha-wrap input{
+	float: left;
+}

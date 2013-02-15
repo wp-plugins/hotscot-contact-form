@@ -33,7 +33,8 @@
         $currentFormSubmissions = $wpdb->get_results($query . $limit);
         $numRows = count($wpdb->get_results($query));
 
-		$currentFormName = $wpdb->get_var('SELECT name FROM ' . $wpdb->prefix . HCF_FORM_TABLE_NAME . ' WHERE id = ' . $_GET['view_form_sub_id']);
+		$currentFormSettings = json_decode(stripslashes($wpdb->get_var('SELECT form_settings FROM ' . $wpdb->prefix . HCF_FORM_TABLE_NAME . ' WHERE id = ' . $_GET['view_form_sub_id'])));
+		$currentFormName = $currentFormSettings->formName;
 	}
 
 	//Delete any boxes that are selected.

@@ -1,6 +1,6 @@
 //The created form
 var formObject = {
-    formName: '',
+    formSettings: '',
     formElements: [],
     emailSettings: ''
 };
@@ -215,10 +215,16 @@ jQuery(document).ready(function(){
     //When the user clicks add/update, we want to create a json object in which to save our created form
     jQuery('#edit_item').submit(function(){
         parseCreatedForm();
-        formObject.formName = jQuery('#form-name').val();
-        formObject.thanksPage = jQuery('#thankspage option:selected').val();
 
-        var emailSettings = {}
+        //Form settings
+        var formSettings = {};
+        formSettings.formName = jQuery('#form-name').val();
+        formSettings.formStyle = jQuery('#form-style option:selected').val();
+        formSettings.thanksPage = jQuery('#thankspage option:selected').val();
+
+        formObject.formSettings = formSettings;
+
+        var emailSettings = {};
         //Client Email Settings
         emailSettings.clientTemplate = jQuery("#clientTemplate").val();
         emailSettings.clientHeaders = jQuery("#clientHeaders").val();

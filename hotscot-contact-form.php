@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.3
+Version: 0.4
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -32,7 +32,7 @@ License: GPL2
  * http://codex.wordpress.org/Creating_Tables_with_Plugins
  */
 global $hcf_db_version;
-$hcf_db_version = "1.0";
+$hcf_db_version = "1.2";
 
 define( 'HCF_FORM_TABLE_NAME' , 'hcf_form' );
 define( 'HCF_SUBMISSION_TABLE_NAME' , 'hcf_form_submission' );
@@ -77,9 +77,9 @@ session_start();
  */
 function hcf_update_db_check() {
     global $hcf_db_version;
-    if ( get_site_option( 'hcf_db_version' ) != $hcf_db_version ) {
-        hc_rse_plugin_install();
-    }
+
+    //Update the database if necessery
+    if ( get_site_option( 'hcf_db_version' ) != $hcf_db_version ) hcf_plugin_install();
 }
 
 /**
@@ -95,16 +95,22 @@ function hcf_plugin_install(){
     $form_table_name = $wpdb->prefix . HCF_FORM_TABLE_NAME;
     $entry_table_name = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
 
-    $sql = "CREATE TABLE $form_table_name (
+
+
+    $dbv = get_site_option( 'hcf_db_version', '-1' );
+
+
+    if(is_null($dbv)){
+    	//New install
+    	$sql = "CREATE TABLE $form_table_name (
             id integer NOT NULL AUTO_INCREMENT,
-            name varchar(255) NOT NULL,
+            form_settings text,
             form_data text,
             email_settings text,
-            thanks_page_id integer NOT NULL,
             UNIQUE KEY id (id)
             );";
 
-    $sql .= "CREATE TABLE $entry_table_name (
+    	$sql .= "CREATE TABLE $entry_table_name (
             id integer NOT NULL AUTO_INCREMENT,
             form_id integer NOT NULL,
             date_submitted TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -112,6 +118,27 @@ function hcf_plugin_install(){
             submission text,
             UNIQUE KEY id (id)
             );";
+
+    }else{ //Update (comining colums)
+
+    	$sql = "DROP TABLE IF EXISTS $form_table_name; CREATE TABLE $form_table_name (
+            id integer NOT NULL AUTO_INCREMENT,
+            form_settings text,
+            form_data text,
+            email_settings text,
+            UNIQUE KEY id (id)
+            );";
+
+    	$sql .= "CREATE TABLE $entry_table_name (
+            id integer NOT NULL AUTO_INCREMENT,
+            form_id integer NOT NULL,
+            date_submitted TIMESTAMP DEFAULT NOW() NOT NULL,
+            title varchar(255),
+            submission text,
+            UNIQUE KEY id (id)
+            );";
+
+    }
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
@@ -125,7 +152,7 @@ function hcf_plugin_install(){
  * @return void
  */
 function hcf_add_dashboard_widget(){
-	wp_add_dashboard_widget('hcf_latest_posts', 'Latest Form Submissions', 'hcf_dashboard_widget');
+	wp_add_dashboard_widget('hcf_latest_posts', 'Recent Form Submissions', 'hcf_dashboard_widget');
 }
 
 /**
@@ -138,7 +165,7 @@ function hcf_dashboard_widget(){
 	$form_table_name = $wpdb->prefix . HCF_FORM_TABLE_NAME;
     $entry_table_name = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
 
-	$query = "SELECT e.id as sub_id, e.date_submitted, e.submission, f.name, f.id as form_id FROM $entry_table_name as e LEFT JOIN $form_table_name as f on e.form_id = f.id ORDER BY date_submitted DESC LIMIT 5";
+	$query = "SELECT e.id as sub_id, e.date_submitted, e.submission, f.form_settings, f.id as form_id FROM $entry_table_name as e LEFT JOIN $form_table_name as f on e.form_id = f.id ORDER BY date_submitted DESC LIMIT 5";
 
 	$subs = $wpdb->get_results($query);
 
@@ -148,14 +175,20 @@ function hcf_dashboard_widget(){
 				<th>Date</th><th>Title</th><th>Form</th>
 			</tr>
 			<?php foreach ($subs as $sub): ?>
+			<?php
+				$formSettings = json_decode(stripslashes($sub->form_settings));
+
+			?>
 			<tr>
 				<td><?php echo $sub->date_submitted; ?></td>
 				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>&sub_id=<?php echo $sub->sub_id; ?>"><?php echo hcf_html_format_submission(stripslashes($sub->submission), true); ?></td>
-				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>"><?php echo $sub->name; ?></td>
+				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>"><?php echo $formSettings->formName; ?></td>
 
 			</tr>
 			<?php endforeach; ?>
 		</table>
+	<?php else: ?>
+		<p>No submissions yet</p>
 	<?php endif;
 }
 
@@ -275,34 +308,50 @@ function hcf_displayFormElement($formElement){
 
 	switch ($formElement->elementType) {
 		case 'text':
-			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ': <input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
+			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ':</label>';
+			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ' />';
 			break;
 		case 'email':
-
+			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
 			if($formElement->sendFormToThisAddress){
-				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '"/>';
+				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '" />';
 			}
-			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ': <input type="text" name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '/></label><br/>';
+			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ':</label>';
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ' />';
 			break;
 		case 'submit':
 			if($formElement->useCaptcha){
-				$html .= '<label class="hcf-label hcf-label-checkbox">Code: <input type="text" name="captchacode" id="captchacode" /></label><br/>';
-				$html .= '<img src="'. get_bloginfo( 'url') . '/HCF_CAPTCHA/" alt="captcha_img" /><br/>';
+				$html .= '<label class="hcf-label hcf-label-checkbox">Code:</label>';
+
+				$html .= '<div class="hcf-captcha-wrap"><input type="text" name="captchacode" id="captchacode" />';
+				$html .= '<img src="'. get_bloginfo( 'url') . '/HCF_CAPTCHA/" class="hcf-captcha" alt="captcha_img" /></div>';
+				$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
+			}else{
+				if(isset($_SESSION['captcha_key'])) unset($_SESSION['captcha_key']);
 			}
-			$html .= '<input type="submit" class="' . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . ' value="' . (($formElement->elementValue != '') ?  $formElement->elementValue : '' ) . '"/><br/>';
+
+			$elementClasses = $formElement->elementClass;
+			$html .= '<input type="submit"' . (($formElement->elementClass == '') ? '': ' class="' . $formElement->elementClass . '" ') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ' value="' . (($formElement->elementValue != '') ?  $formElement->elementValue : 'Submit' ) . '" />';
 			break;
 		case 'checkbox':
 			if(strpos($formElement->elementOptions, ',')){
 				$options = explode(',', $formElement->elementOptions);
+				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
 				foreach($options as $option){
-					$html .= '<label class="hcf-label hcf-label-checkbox">' . $option . ' <input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '" value="' . $option . '"/></label><br/>';
+					$html .= '<label class="hcf-label hcf-label-checkbox">' . $option . '</label>';
+					$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' value="' . $option . ' "/>';
 				}
-			}elseif($formElement->elementOptions != ''){
-				$html .= '<label class="hcf-label hcf-label-checkbox">' . $formElement->elementOptions . ' <input type="checkbox" name="' . $formElement->elementName . '[]" class="' . (($formElement->isElementRequired) ? 'hcf_req_check' : '') . $formElement->elementClass . '"/></label><br/>';
+			}elseif($formElement->elementOptions != ''){ //Single option field (i.e terms and conditions)
+				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass;
+				$html .= '<label class="hcf-label hcf-label-checkbox">' . $formElement->elementOptions . '</label>' ;
+				$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' />';
 			}
 			break;
 		case 'select':
-				$html .= '<label class="hcf-label hcf-label-select">' . $formElement->elementName . ': <select name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_select' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '>';
+				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+				$html .= '<label class="hcf-label hcf-label-select">' . $formElement->elementName . ':</label>';
+				$html .= '<select' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>';
 				$html .= '<option value="-1">Please Select...</option>';
 				if(strpos($formElement->elementOptions, ',')){
 					$options = explode(',', $formElement->elementOptions);
@@ -313,12 +362,16 @@ function hcf_displayFormElement($formElement){
 				}elseif($formElement->elementOptions != ''){
 					$html .= "<option value=\"{$formElement->elementOptions}\">{$formElement->elementOptions}</option>";
 				}
-				$html .= "</select></label><br/>";
+				$html .= "</select>";
 			break;
 		case 'textarea':
-				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label><textarea name="' . $formElement->elementName . '" class="' . (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass . '" ' . (($formElement->elementID != '') ? 'id="' . $formElement->elementID . '"' : '') . '></textarea><br/>';
+				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label>';
+				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '></textarea>';
 			break;
 	}
+
+	$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
 
 	return $html;
 }
@@ -591,8 +644,9 @@ function hcf_add_form_picker_button($context){
 
   	if($savedForms){
 	  	foreach($savedForms as $form){
-
-	  		$formPopup  .= '<label><input type="radio" style="margin-bottom: 10px" name="formselect" value="' . $form->id . '" ' . ((++$formCount == 1) ? 'checked="checked"' : '') . '/>' .  stripslashes($form->name) . '</label><br/>';
+	  		$formSettings = json_decode(stripslashes($form->form_settings));
+	  		$formName = $formSettings->formName;
+	  		$formPopup  .= '<label><input type="radio" style="margin-bottom: 10px" name="formselect" value="' . $form->id . '" ' . ((++$formCount == 1) ? 'checked="checked"' : '') . '/>' .  stripslashes($formName) . '</label><br/>';
 	  	}
 
 	  	$formPopup .= '<button id="hcf-form-selector" class="button-primary"/>Embed Form</button>';
@@ -629,8 +683,29 @@ function hcf_display_form($atts){
 
     //if no form exists with the id, exit
     if(is_null($form)) return '';
+
+    //Parse out form settings
+    $formSettings = json_decode(stripslashes($form->form_settings));
+
+    //Add validation script
     wp_enqueue_script('hcf-form', $src = WP_PLUGIN_URL . '/hotscot-contact-form/js/client-script.js' , $deps = array('jquery') );
 
+    //Add basic styles
+    switch ($formSettings->formStyle) {
+    	case 'horizontal':
+    		wp_enqueue_style( 'hcf-horizontal', $src = WP_PLUGIN_URL . '/hotscot-contact-form/css/form/hcf-horizontal.css');
+    		break;
+    	case 'stacked':
+    		wp_enqueue_style( 'hcf-vertical', $src = WP_PLUGIN_URL . '/hotscot-contact-form/css/form/hcf-vertical.css');
+    		break;
+
+    	default:
+    		//no styles... e
+    		break;
+    }
+
+
+    //Build up form html
     $formHTML = '';
 
     if(isset($_GET['hcferror']) && $_GET['hcferror'] == 'captcha'){

@@ -33,10 +33,10 @@ if(isset($_GET['edit_id']) && isset($_POST["frm-sbmt"])){
 
 	if($chkfrm==''){
 		$formObj = json_decode(stripslashes($_POST['hcf-form-object']));
-		if(isset($formObj->formName)) $form['name'] = $formObj->formName;
+
+		if(isset($formObj->formSettings)) $form['form_settings'] = json_encode($formObj->formSettings);
 		if(isset($formObj->formElements)) $form['form_data'] = json_encode($formObj->formElements);
 		if(isset($formObj->emailSettings)) $form['email_settings'] = json_encode($formObj->emailSettings);
-		if(isset($formObj->thanksPage)) $form['thanks_page_id'] = $formObj->thanksPage;
 
 		if($_GET["edit_id"] == 0){
 			//add new
@@ -60,8 +60,15 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 	$qry = $wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . HCF_FORM_TABLE_NAME . ' WHERE id = %d', $_GET["edit_id"]);
 	$rowres = $wpdb->get_row($qry) ;
 	$wpdb->flush();
-	$name = stripslashes($rowres->name);
 
+	if($rowres->form_settings != ''){
+		$formSettings = json_decode($rowres->form_settings);
+		$name = stripslashes($formSettings->formName);
+		$style = stripslashes($formSettings->formStyle);
+		$thankspage = stripslashes($formSettings->thanksPage);
+	}
+
+	$form_data = stripslashes($rowres->form_data);
 	if($rowres->email_settings != ''){
 		$emailSettings = json_decode($rowres->email_settings);
 		$clientTemplate = $emailSettings->clientTemplate;
@@ -75,9 +82,6 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 
 		$ownerEmail = stripslashes($emailSettings->ownerEmail);
 	}
-
-	$thankspage = stripslashes($rowres->thanks_page_id);
-	$form_data = stripslashes($rowres->form_data);
 }
 
 ?>
@@ -111,12 +115,42 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 
 	<div style="width: 100%;">
 		<div class="postbox">
-			<h3 class="box-header"><span>Form Name</span></h3>
+			<h3 class="box-header"><span>Basic Settings</span></h3>
 			<div class="inside">
-				<input type="text" size="50" style="width: 100%" name="name" id="form-name" value="<?php echo (($newForm) ? 'Simple Enquiry Form' : $name); ?>" />
+				<table class="form-table">
+					<tr>
+						<th valign="top"><label for="form-name">Form Name:</label></th>
+						<td><input type="text" size="50" class="regular-text" name="name" id="form-name" value="<?php echo (($newForm) ? 'Simple Enquiry Form' : $name); ?>" /></td>
+					</tr>
+					<tr>
+						<th valign="top"><label for="form-style">Style:</label></th>
+						<td>
+							<select id="form-style" name="form-style">
+								<option <?php if($style == 'none') echo 'selected="selected"' ;?> value="none">None</option>
+								<option <?php if($style == 'stacked') echo 'selected="selected"' ;?> value="stacked">Stacked</option>
+								<option <?php if($style == 'horizontal') echo 'selected="selected"' ;?> value="horizontal">Horizontal</opion>
+							</select>
+							<p class="description" ><strong>Stacked:</strong> - Shows label above Fields, <strong>Horizontal</strong> - Shows labels beside form fileds</p>
+						</td>
+					</tr>
+					<tr>
+						<th valign="top"><label for="thankspage">Submission Page:</label></th>
+						<td>
+							<?php
+								wp_dropdown_pages(array(
+								    'name' => 'submission_page',
+								    'id' => 'thankspage',
+								    'selected' => $thankspage
+								));
+							 ?>
+							 <p class="description">The form will redirect to this page after it is verified and submitted</p>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>
+
 
 	<div id="post-body" class="metabox-holder columns-2">
 		<div class="postbox-container">
@@ -433,23 +467,6 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 
 		<div class="clear"><!-- clear --></div>
 
-		<div style="width: 100%;">
-			<div class="postbox">
-				<h3 class="box-header"><span>Thank You Page</span><small> - The form will redirect to this page after it is verified and submitted</small></h3>
-				<div class="inside">
-					<label for="thankspage">Page:</label><?php
-							wp_dropdown_pages(array(
-							    'name' => 'submission_page',
-							    'id' => 'thankspage',
-							    'selected' => $thankspage
-							));
-						 ?>
-				</div>
-			</div>
-		</div>
-
-		<div class="clear"><!-- clear --></div>
-
 		<h2>Email Templates</h2>
 		<p>Here you can customize the emails that are sent out.  To include form data in the email simply use the elements <strong>name</strong> wrapped in square brackets e.g. <em>[email]</em></p>
 		<div style="width: 100%;">
@@ -464,7 +481,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 					<?php endif; ?>
 					<h3>Headers (Advanced - Leave blank if unsure)</h3>
 					<textarea size="50" rows="6"  style="width: 100%" name="clientHeaders" id="clientHeaders"><?php echo $clientHeaders; ?></textarea><br/>
-					<label for="clientUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="clientUseHTMLEmail" id="clientUseHTMLEmail" <?php echo (($clientUseHTMLEmail || $newForm) ? 'checked="checked"' : ''); ?> />
+					<label for="clientUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="clientUseHTMLEmail" id="clientUseHTMLEmail" <?php echo (($clientUseHTMLEmail) ? 'checked="checked"' : ''); ?> />
 				</div>
 			</div>
 		</div>
@@ -487,7 +504,7 @@ Enquiry:
 					<h3>Headers (Advanced - Leave blank if unsure)</h3>
 					<textarea size="50" rows="6"  style="width: 100%" name="ownerHeaders" id="ownerHeaders"><?php echo $ownerHeaders; ?></textarea>
 					<label for="owner-email">Email Address:</label><input type="text" size="50" style="width: 100%" name="ownerEmail" id="ownerEmail" value="<?php echo (($newForm) ? 'you@example.com' : $ownerEmail); ?>" /><br/>
-					<label for="ownerUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="ownerUseHTMLEmail" id="ownerUseHTMLEmail" <?php echo (($ownerUseHTMLEmail || $newForm) ? 'checked="checked"' : ''); ?> />
+					<label for="ownerUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="ownerUseHTMLEmail" id="ownerUseHTMLEmail" <?php echo (($ownerUseHTMLEmail) ? 'checked="checked"' : ''); ?> />
 				</div>
 			</div>
 		</div>

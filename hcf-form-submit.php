@@ -79,10 +79,12 @@
 			/** Redirect **/
 
 			$redirectURL = get_bloginfo('url');
-			$subPageID = $row->thanks_page_id;
+
+			$formSettings = json_decode(stripslashes($row->form_settings));
+			$subPageID = $formSettings->thanksPage;
 
 			//If there's a url set, use it instead of the default
-			if(!is_null($subPageID)) $redirectURL = get_bloginfo('url') . '/' . hcf_get_page_slug($subPageID) . '/';
+			if(!is_null($subPageID)) $redirectURL = get_bloginfo('url') . '/' . hcf_get_page_slug($subPageID) . '/?hcf-success=1';
 
 			header('Location: ' . $redirectURL);
 		}else{

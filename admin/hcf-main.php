@@ -42,8 +42,11 @@
 				</thead>
 				<tbdody>
 			        <?php foreach($savedForms as $form): ?>
+			        	<?php
+			        		$formSettings = json_decode(stripslashes($form->form_settings));
+			        	?>
 			        	<tr>
-			        		<td><?php echo stripslashes($form->name); ?></td>
+			        		<td><?php echo stripslashes($formSettings->formName); ?></td>
 			        		<td align="right">
 								<a href="<?php echo $baseurl; ?>&amp;edit_id=<?php echo $form->id; ?>">Edit</a>&nbsp;&nbsp;|&nbsp;
 							    <a href="<?php echo $baseurl; ?>&amp;del_sub_id=<?php echo $form->id; ?>">Delete</a>&nbsp;&nbsp;|&nbsp;
