@@ -91,9 +91,9 @@
 		}else{ //error
 			$_SESSION['post_data'] = $_POST;
 			if(preg_match('#(\?|\&)hcferror\=captcha#', $_SERVER['HTTP_REFERER'])){
-				header('Location: ' . $_SERVER['HTTP_REFERER']);
+				header('Location: ' . $_SERVER['HTTP_REFERER'] . "#form-" . $_POST['form_id']);
 			}else{
-				header('Location: ' . $_SERVER['HTTP_REFERER'] . $chkfrm);
+				header('Location: ' . $_SERVER['HTTP_REFERER'] . $chkfrm . "#form-" . $_POST['form_id']);
 			}
 		}
 	}

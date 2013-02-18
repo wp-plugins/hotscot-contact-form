@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.5
+Stable tag: 0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ n/a
 
 == Changelog ==
 
+= 0.6 =
+* Enhancement: added anchor tag just above form so that on pages with a lot of content before the form, after a bad sumbission, the page auto-scrolls back to the form.
+
 = 0.5 =
 * Various bug fixes: post data not showing after bad submission, basic style for error message and checkboxes
 
@@ -49,6 +52,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+
+= 0.6 =
+* Enhancement: added anchor tag just above form so that on pages with a lot of content before the form, after a bad sumbission, the page auto-scrolls back to the form.
 
 = 0.5 =
 * Various bug fixes: post data not showing after bad submission, basic style for error message and checkboxes

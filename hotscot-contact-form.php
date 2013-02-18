@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.5
+Version: 0.6
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -718,6 +718,7 @@ function hcf_display_form($atts){
     $formHTML = '';
 
     if(isset($_GET['hcferror']) && $_GET['hcferror'] == 'captcha'){
+    	$formHTML .= "<a name=\"form-$id\"></a>";
     	$formHTML .= '<div class="hcf-error"><p><strong>Error:</strong> Invalid CAPTCHA code</p></div>';
     }
 
