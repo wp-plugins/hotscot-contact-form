@@ -18,7 +18,7 @@
 	}
 
 	//Get all created forms
-    $qry = "SELECT *, (SELECT count(*) FROM " . $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME . " AS sub WHERE sub.form_id = form.id) AS entries FROM " . $wpdb->prefix . HCF_FORM_TABLE_NAME . " AS form ORDER BY form.name ASC";
+    $qry = "SELECT *, (SELECT count(*) FROM " . $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME . " AS sub WHERE sub.form_id = form.id) AS entries FROM " . $wpdb->prefix . HCF_FORM_TABLE_NAME . " AS form ORDER BY form.id DESC";
     $savedForms = $wpdb->get_results($qry);
 
     $formCount = 0;

@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.4
+Version: 0.5
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -303,14 +303,14 @@ function hcf_get_form_submission_fields($formID){
  * @param FormElement $formEment
  * @return void
  */
-function hcf_displayFormElement($formElement){
+function hcf_displayFormElement($formElement, $postdata){
 	$html = '';
 
 	switch ($formElement->elementType) {
 		case 'text':
 			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ':</label>';
 			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
-			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ' />';
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ((isset($postdata[$formElement->elementName])) ? ' value="' . $postdata[$formElement->elementName] . '"' : '') . '/>';
 			break;
 		case 'email':
 			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
@@ -318,7 +318,7 @@ function hcf_displayFormElement($formElement){
 				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '" />';
 			}
 			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ':</label>';
-			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ' />';
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') .  ((isset($postdata[$formElement->elementName])) ? ' value="' . $postdata[$formElement->elementName] . '"' : '') . ' />';
 			break;
 		case 'submit':
 			if($formElement->useCaptcha){
@@ -338,14 +338,23 @@ function hcf_displayFormElement($formElement){
 			if(strpos($formElement->elementOptions, ',')){
 				$options = explode(',', $formElement->elementOptions);
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+
+				$count = 0;
+
+				//Checkboxes are handled slightly differnetly, see theyre set and pull out the data
+				$checkboxOptions = array();
+				if(isset($postdata['checkbox'])) $checkboxOptions = $postdata['checkbox'];
+
 				foreach($options as $option){
-					$html .= '<label class="hcf-label hcf-label-checkbox">' . $option . '</label>';
-					$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' value="' . $option . ' "/>';
+					$id = $formElement->elementName . ++$count;
+					$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
+					$html .= '<label for="' . $id . '" class="hcf-label hcf-label-checkbox">' . $option . '</label>';
+					$html .= '<input id="' . $id  . '" type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' value="' . $option . '"' . (in_array($option, $checkboxOptions) ? ' checked="checked"': '') . '/>';
 				}
 			}elseif($formElement->elementOptions != ''){ //Single option field (i.e terms and conditions)
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass;
 				$html .= '<label class="hcf-label hcf-label-checkbox">' . $formElement->elementOptions . '</label>' ;
-				$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' />';
+				$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ((isset($postdata[$formElement->elementName])) ? ' checked="checked"': '') . ' />';
 			}
 			break;
 		case 'select':
@@ -357,7 +366,7 @@ function hcf_displayFormElement($formElement){
 					$options = explode(',', $formElement->elementOptions);
 
 					foreach($options as $option){
-						$html .= "<option value=\"$option\">$option</option>";
+						$html .= '<option value="' . $option . '"' . ((isset($postdata[$formElement->elementName]) && $postdata[$formElement->elementName] == $option) ? ' selected="selected"': '') .  ">$option</option>";
 					}
 				}elseif($formElement->elementOptions != ''){
 					$html .= "<option value=\"{$formElement->elementOptions}\">{$formElement->elementOptions}</option>";
@@ -367,7 +376,7 @@ function hcf_displayFormElement($formElement){
 		case 'textarea':
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
 				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label>';
-				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '></textarea>';
+				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>' . ((isset($postdata[$formElement->elementName])) ? $postdata[$formElement->elementName] : '').'</textarea>';
 			break;
 	}
 
@@ -623,7 +632,7 @@ function hcf_setup_custom_assets(){
  */
 function hcf_add_form_picker_button($context){
 	global $wpdb;
-	$qry = "SELECT *, (SELECT count(*) FROM " . $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME . " AS sub WHERE sub.form_id = form.id) AS entries FROM " . $wpdb->prefix . HCF_FORM_TABLE_NAME . " AS form ORDER BY form.name ASC";
+	$qry = "SELECT *, (SELECT count(*) FROM " . $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME . " AS sub WHERE sub.form_id = form.id) AS entries FROM " . $wpdb->prefix . HCF_FORM_TABLE_NAME . " AS form ORDER BY form.id DESC";
     $savedForms = $wpdb->get_results($qry);
 
 	$img = plugins_url( 'images/icon.png' , __FILE__ );
@@ -715,8 +724,17 @@ function hcf_display_form($atts){
     $formHTML .= '<form class="hcf-form" method="post" action="'. get_bloginfo('url') . '/hcf-form-submit/">';
     $formHTML .= '<input type="hidden" name="form_id" value="' . $id . '"/>';
 
+    //if we've been redirected back to the form because of a captcha error, pull the post from the session
+	//and remove the data.
+	$postdata = array();
+	if(isset($_SESSION['post_data'])){
+		$postdata = $_SESSION['post_data'];
+		unset($_SESSION['post_data']);
+	}
+
+
     foreach(json_decode($form->form_data) as $element){
-    	$formHTML .= hcf_displayFormElement($element);
+    	$formHTML .= hcf_displayFormElement($element,$postdata);
     }
 
     return $formHTML .= '</form>';

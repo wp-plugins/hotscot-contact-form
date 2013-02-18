@@ -17,6 +17,7 @@
 
 			if(isset($_POST['captchacode']) && $_POST['captchacode'] == $_SESSION['captcha_key']){
 				$chkfrm = '';
+				unset($_POST['captchacode']);
 				unset($_SESSION['captcha_key']);
 			}
 		}
@@ -87,7 +88,8 @@
 			if(!is_null($subPageID)) $redirectURL = get_bloginfo('url') . '/' . hcf_get_page_slug($subPageID) . '/?hcf-success=1';
 
 			header('Location: ' . $redirectURL);
-		}else{
+		}else{ //error
+			$_SESSION['post_data'] = $_POST;
 			if(preg_match('#(\?|\&)hcferror\=captcha#', $_SERVER['HTTP_REFERER'])){
 				header('Location: ' . $_SERVER['HTTP_REFERER']);
 			}else{

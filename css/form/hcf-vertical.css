@@ -32,3 +32,21 @@
 .hcf-form .hcf-captcha-wrap input{
 	float: left;
 }
+
+/** Error class **/
+div.hcf-error{
+	margin: 5px 0 15px;
+	background-color: #ffebe8;
+	border: 1px solid #c00;
+	padding: 6px;
+}
+
+div.hcf-error p{
+	margin-bottom: 0;
+}
+
+.hcf-form .hcf-label.hcf-label-checkbox{
+	display: inline-block;
+	padding-right: 5px;
+
+}

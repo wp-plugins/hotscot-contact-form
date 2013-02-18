@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.4
+Stable tag: 0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,28 +29,35 @@ Here you can use the standard email headers accepted by the php mail() function 
 
 == Screenshots ==
 n/a
+
 == Changelog ==
 
-= 0.1 =
-* initial build
-
-= 0.2 =
-* added dashboard widget
-
-= 0.3 =
-*added classes to main output for easier styling and fixed labels
+= 0.5 =
+* Various bug fixes: post data not showing after bad submission, basic style for error message and checkboxes
 
 = 0.4 =
 * Added some default styling for the form if the user required it.
 * Use plain text email by default
 
-== Upgrade Notice ==
+= 0.3 =
+*added classes to main output for easier styling and fixed labels
 
 = 0.2 =
-Added dashboard widget
+* added dashboard widget
+
+= 0.1 =
+* initial build
+
+== Upgrade Notice ==
+
+= 0.5 =
+* Various bug fixes: post data not showing after bad submission, basic style for error message and checkboxes
+
+= 0.4 =
+This update has a database schema change which means you will need to recreate your form(s)
 
 = 0.3 =
 easier styleing thanks to classes
 
-= 0.4 =
-This update has a database schema change which means you will need to recreate your form(s)
+= 0.2 =
+Added dashboard widget
