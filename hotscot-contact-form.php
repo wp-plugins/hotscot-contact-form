@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.6
+Version: 0.7
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -310,7 +310,7 @@ function hcf_displayFormElement($formElement, $postdata){
 		case 'text':
 			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ':</label>';
 			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
-			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ((isset($postdata[$formElement->elementName])) ? ' value="' . $postdata[$formElement->elementName] . '"' : '') . '/>';
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ((isset($postdata[$formElement->elementName])) ? ' value="' . stripslashes($postdata[$formElement->elementName]) . '"' : '') . '/>';
 			break;
 		case 'email':
 			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
@@ -318,7 +318,7 @@ function hcf_displayFormElement($formElement, $postdata){
 				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '" />';
 			}
 			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ':</label>';
-			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') .  ((isset($postdata[$formElement->elementName])) ? ' value="' . $postdata[$formElement->elementName] . '"' : '') . ' />';
+			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') .  ((isset($postdata[$formElement->elementName])) ? ' value="' . stripslashes($postdata[$formElement->elementName]) . '"' : '') . ' />';
 			break;
 		case 'submit':
 			if($formElement->useCaptcha){
@@ -376,7 +376,7 @@ function hcf_displayFormElement($formElement, $postdata){
 		case 'textarea':
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
 				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label>';
-				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>' . ((isset($postdata[$formElement->elementName])) ? $postdata[$formElement->elementName] : '').'</textarea>';
+				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>' . ((isset($postdata[$formElement->elementName])) ? stripslashes($postdata[$formElement->elementName]) : '').'</textarea>';
 			break;
 	}
 
@@ -877,7 +877,7 @@ function hcf_parse_template($template, $postVars){
 				$arrStr = substr($arrStr, 0, -2);
 				$template = preg_replace('#\[' . $pkey . '\]#', $arrStr, $template);
 			}else{ //just a normal value
-				$template = preg_replace('#\[' . $pkey . '\]#', $pval, $template);
+				$template = preg_replace('#\[' . $pkey . '\]#', stripslashes($pval), $template);
 			}
 		}
 	}
