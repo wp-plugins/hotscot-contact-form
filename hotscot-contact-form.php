@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.9.1
+Version: 0.9.2
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2

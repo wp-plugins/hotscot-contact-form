@@ -84,12 +84,9 @@
 			$redirectURL = get_bloginfo('url');
 
 			$formSettings = json_decode(stripslashes($row->form_settings));
-			$subPageID = $formSettings->thanksPage;
 
-			//If there's a url set, use it instead of the default
-			if(!is_null($subPageID)) $redirectURL = get_bloginfo('url') . '/' . hcf_get_page_slug($subPageID) . '/?hcf-success=1';
 
-			header('Location: ' . $redirectURL);
+			header('Location: ' . get_page_link($formSettings->thanksPage)  . '?hcf-success=1');
 		}else{ //error
 			$_SESSION['post_data'] = $_POST;
 			if(preg_match('#(\?|\&)hcferror\=captcha#', $_SERVER['HTTP_REFERER'])){
