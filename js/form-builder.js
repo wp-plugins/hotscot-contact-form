@@ -101,9 +101,11 @@ function parseCreatedForm(){
         }
 
         //Generic information for all form elements
-        elem.elementID = jQuery(value).find('input[name="id"]').val();
-        elem.elementClass = jQuery(value).find('input[name="class"]').val();
-        elem.elementName = jQuery(value).find('input[name="name"]').val()  || '';
+        //Note: we are triming the id and name to avoid spaces, you're on your own with classes and lebels
+        elem.elementID = jQuery.trim(jQuery(value).find('input[name="id"]').val().trim()) || '';
+        elem.elementName = jQuery.trim(jQuery(value).find('input[name="name"]').val())  || '';
+        elem.elementClass = jQuery(value).find('input[name="class"]').val() || '';
+        elem.elementLabel = jQuery(value).find('input[name="label"]').val()  || '';
 
         //Append our new form element to our list
         formObject.formElements.push(elem);
@@ -163,7 +165,7 @@ function setupFormElements(){
     });
 
     //When the name changes, update the corrisponding td
-    jQuery('#form-elements').on('keyup', 'input[name="name"]', function(e){
+    jQuery('#form-elements').on('keyup', 'input[name="label"]', function(e){
     	jQuery(this).parents('tr:last').children('td:first').text(jQuery(this).val());
     });
 }
@@ -214,6 +216,7 @@ jQuery(document).ready(function(){
 
     //When the user clicks add/update, we want to create a json object in which to save our created form
     jQuery('#edit_item').submit(function(){
+    	var isValid = true;
         parseCreatedForm();
 
         //Form settings
@@ -228,6 +231,7 @@ jQuery(document).ready(function(){
         //Client Email Settings
         emailSettings.clientTemplate = jQuery("#clientTemplate").val();
         emailSettings.clientHeaders = jQuery("#clientHeaders").val();
+        emailSettings.clientSubject = jQuery("#clientSubject").val();
 
         //Check for html email.
         if((jQuery("#clientUseHTMLEmail").attr('checked') !== undefined) && (jQuery("#clientUseHTMLEmail").attr('checked') == "checked")){
@@ -241,6 +245,7 @@ jQuery(document).ready(function(){
         emailSettings.ownerTemplate = jQuery("#ownerTemplate").val();
         emailSettings.ownerEmail = jQuery("#ownerEmail").val();
         emailSettings.ownerHeaders = jQuery("#ownerHeaders").val();
+        emailSettings.ownerSubject = jQuery("#ownerSubject").val();
 
 		//Check for html email.
         if((jQuery("#ownerUseHTMLEmail").attr('checked') !== undefined) && (jQuery("#ownerUseHTMLEmail").attr('checked') == "checked")){
@@ -252,16 +257,54 @@ jQuery(document).ready(function(){
         formObject.emailSettings = emailSettings;
 
         jQuery('#hcf-form-object').val(JSON.stringify(formObject));
-        return true;
-    });
 
-    //When a name is edited, display it in the right column
-    jQuery('.hcf-edit-box input[name="name"]').blur(function(){
-    	var text = jQuery(this).text();
-    	console.log('text ' + text);
+        //Before submuitting validate the form to make sure the id's names have no spaces
+        isValid = validateFormNamesAndIDs();
 
-    	if( text != ""){
-    		jQuery(this).parent('tr').children('td.name').text(text);
-    	}
+        return isValid;
     });
 });
+
+
+//Check ID's and Name's for spaces
+function validateFormNamesAndIDs(){
+	var isValid = true;
+	var validationMsg = '';
+
+	for(var i = 0; i < formObject.formElements.length; i++){
+
+		//Check ID for space
+		if(formObject.formElements[i].elementID != ''){
+			if(/\s/.test(formObject.formElements[i].elementID)){
+				isValid = false;
+				validationMsg = validationMsg + "ID: \"" + formObject.formElements[i].elementID + "\" - Element ID's are not allowed to contain a space<br/>";
+			}
+		}
+
+		//Check name for Space
+		if(formObject.formElements[i].elementName != ''){
+			if(/\s/.test(formObject.formElements[i].elementName)){
+				isValid = false;
+				validationMsg = validationMsg + "Name: \"" + formObject.formElements[i].elementName + "\" - Element name are not allowed to contain a space<br/>";
+			}
+		}
+	}
+
+	if(!isValid) displayErrorMsg(validationMsg);
+	return isValid;
+}
+
+function displayErrorMsg(msg){
+	if(jQuery('.updated').length == 1){
+		jQuery('.updated').hide();
+	}
+
+	if(jQuery('#hsjserror').length == 1){
+		//update message
+		jQuery('#hsjserror .error p').text(msg);
+	}else{ //add to page
+		jQuery('.hcf-wrap h2:first').after('<div id="hsjserror" class="error"><p>' + msg + '</p></div>');
+		jQuery('body').scrollTop(0);
+	}
+
+}

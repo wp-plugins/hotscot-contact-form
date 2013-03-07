@@ -55,25 +55,27 @@
 
 				//check that the email templates are set then send emails
 				if($emailSettings->clientTemplate != '' && isset($clientemail)){
+					$cSubject = ((property_exists($emailSettings, 'clientSubject')) ? $emailSettings->clientSubject : 'Contact Form Submission' );
+					$oSubject = ((property_exists($emailSettings, 'ownerSubject')) ? $emailSettings->ownerSubject : 'Contact Form Submission' );
 					//Parse out all client email adddressses
 					if(is_array($clientemail)){
 						foreach($clientemail as $postkey){
 							$email = $_POST[preg_replace('#\s#', '_', $postkey)];
 
-
-							if(hcf_is_email($email)) hcf_send_email($emailSettings->clientTemplate, $email, $postVars, $emailSettings->clientHeaders, $emailSettings->clientUseHTMLEmail);
+							if(hcf_is_email($email)) hcf_send_email($cSubject, $emailSettings->clientTemplate, $email, $postVars, $emailSettings->clientHeaders, $emailSettings->clientUseHTMLEmail);
 
 						}
 					}else{
 						//just the one
 						$email = $_POST[preg_replace('#\s#', '_', $clientemail)];
-						if(hcf_is_email($email)) hcf_send_email($emailSettings->clientTemplate, $email, $postVars, $emailSettings->clientHeaders, $emailSettings->clientUseHTMLEmail);
+						if(hcf_is_email($email)) hcf_send_email($cSubject, $emailSettings->clientTemplate, $email, $postVars, $emailSettings->clientHeaders, $emailSettings->clientUseHTMLEmail);
 					}
 				}
 
+
 				//send out owner email
 				if($emailSettings->ownerTemplate != '' && $emailSettings->ownerEmail != '' && hcf_is_email($emailSettings->ownerEmail)){
-					hcf_send_email($emailSettings->ownerTemplate, $emailSettings->ownerEmail, $postVars, $emailSettings->ownerHeaders, $emailSettings->ownerUseHTMLEmail);
+					hcf_send_email($oSubject, $emailSettings->ownerTemplate, $emailSettings->ownerEmail, $postVars, $emailSettings->ownerHeaders, $emailSettings->ownerUseHTMLEmail);
 				}
 			}
 

@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.7
+Version: 0.8
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -398,14 +398,16 @@ function hcf_admin_displayFormElement($formElement){
 		case 'text':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-text-box">Textbox</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
-
 					<div class="hcf-edit-box hcf-hidden">
 						<form>
 							<table>
+								<tr>
+									<td><label>Label: </label></td><td><input type="text" name="label" value="<?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?>"/></td>
+								</tr>
 								<tr>
 									<td><label>Name: </label></td><td><input type="text" name="name" value="<?php echo $formElement->elementName; ?>"/></td>
 								</tr>
@@ -428,7 +430,7 @@ function hcf_admin_displayFormElement($formElement){
 		case 'email':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-email-box">Email</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -436,6 +438,9 @@ function hcf_admin_displayFormElement($formElement){
 					<div class="hcf-edit-box hcf-hidden">
 						<form>
 							<table>
+								<tr>
+									<td><label>Label: </label></td><td><input type="text" name="label" value="<?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?>"/></td>
+								</tr>
 								<tr>
 									<td><label>Name: </label></td><td><input type="text" name="name" value="<?php echo $formElement->elementName; ?>"/></td>
 								</tr>
@@ -465,7 +470,7 @@ function hcf_admin_displayFormElement($formElement){
 		case 'submit':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-submit">Submit Button</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -480,7 +485,7 @@ function hcf_admin_displayFormElement($formElement){
 									<td><label>Class: </label></td><td><input type="text" name="class" value="<?php echo $formElement->elementClass; ?>"/></td>
 								</tr>
 								<tr>
-									<td><label>Value: </label></td><td><input type="text" name="value" value="<?php echo $formElement->elementValue; ?>"/></td>
+									<td><label>Button Text: </label></td><td><input type="text" name="value" value="<?php echo $formElement->elementValue; ?>"/></td>
 								</tr>
 								<tr>
 									<td><label>Use CAPTCHA: </label></td><td><input type="checkbox" <?php if($formElement->useCaptcha) echo 'checked="checked"'; ?> name="captcha"/></td>
@@ -495,7 +500,7 @@ function hcf_admin_displayFormElement($formElement){
 		case 'checkbox':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-checkbox">Checkbox Group</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -503,6 +508,9 @@ function hcf_admin_displayFormElement($formElement){
 					<div class="hcf-edit-box hcf-hidden">
 						<form>
 							<table>
+								<tr>
+									<td><label>Label: </label></td><td><input type="text" name="label" value="<?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?>"/></td>
+								</tr>
 								<tr>
 									<td><label>Name: </label></td><td><input type="text" name="name" value="<?php echo $formElement->elementName; ?>"/></td>
 								</tr>
@@ -525,7 +533,7 @@ function hcf_admin_displayFormElement($formElement){
 		case 'select':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-select">Dropdown</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -533,6 +541,9 @@ function hcf_admin_displayFormElement($formElement){
 					<div class="hcf-edit-box hcf-hidden">
 						<form>
 							<table>
+								<tr>
+									<td><label>Label: </label></td><td><input type="text" name="label" value="<?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?>"/></td>
+								</tr>
 								<tr>
 									<td><label>Name: </label></td><td><input type="text" name="name" value="<?php echo $formElement->elementName; ?>"/></td>
 								</tr>
@@ -558,7 +569,7 @@ function hcf_admin_displayFormElement($formElement){
 		case 'textarea':
 			?>
 			<tr>
-				<td class="name"><?php echo $formElement->elementName; ?></td>
+				<td class="name"><?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?></td>
 				<td class="hcf-textarea">Textarea</td>
 				<td class="actions">
 					<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -566,6 +577,9 @@ function hcf_admin_displayFormElement($formElement){
 					<div class="hcf-edit-box hcf-hidden">
 						<form>
 							<table>
+								<tr>
+									<td><label>Label: </label></td><td><input type="text" name="label" value="<?php echo ((property_exists($formElement, 'elementLabel')) ?  $formElement->elementLabel : $formElement->elementName); ?>"/></td>
+								</tr>
 								<tr>
 									<td><label>Name: </label></td><td><input type="text" name="name" value="<?php echo $formElement->elementName; ?>"/></td>
 								</tr>
@@ -863,6 +877,7 @@ function hcf_get_page_slug( $id ) {
  * @return str $template - template with swapped out values
  */
 function hcf_parse_template($template, $postVars){
+
 	//Go through all the post vars
 	foreach ($postVars as $pkey => $pval) {
 		//If there's a "[fieldName]", swap it out for the matching value
@@ -895,7 +910,8 @@ function hcf_parse_template($template, $postVars){
  * @param bool $htmlEmail - Send email as HTML email if true, plain text if not
  * @return void
  */
-function hcf_send_email($template, $email, $postVars, $headers = '', $htmlEmail = false){
+function hcf_send_email($subject, $template, $email, $postVars, $headers = '', $htmlEmail = false){
+
 	$template = hcf_parse_template($template, $postVars);
 
 	//If HTML email, setup headers
@@ -908,9 +924,9 @@ function hcf_send_email($template, $email, $postVars, $headers = '', $htmlEmail 
 	$newHeaders .= $headers;
 
 	if($newHeaders != ''){
-		mail($email, 'Form Submission', $template, $newHeaders);
+		mail($email, $subject, $template, $newHeaders);
 	}else{ //send email without headers
-		mail($email, 'Form Submission', $template);
+		mail($email, $subject, $template);
 	}
 
 }

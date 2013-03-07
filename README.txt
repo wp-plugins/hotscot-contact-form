@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.7
+Stable tag: 0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ n/a
 
 == Changelog ==
 
+= 0.8 =
+* new: labels
+* new: email subject lines
+
 = 0.7 =
 * Fixed: post data was not having it's slashes stripped.
 
@@ -55,6 +59,10 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+
+= 0.8 =
+* new: labels
+* new: email subject lines
 
 = 0.7 =
 * Fixed: post data was not having it's slashes stripped.

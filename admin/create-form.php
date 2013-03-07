@@ -14,17 +14,20 @@ $newForm = true; //are we creating a new form?
 
 if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0) $newForm = false;
 
-//Form vars
+//Form vars;
 $name = '';
-$clientTemplate = '';
-$ownerTemplate = '';
-$ownerEmail = '';
 $data = '';
 $thankspage = '';
-$clientHeaders = '';
+
 $ownerHeaders = '';
-$clientUseHTMLEmail = false;
+$ownerEmail = '';
+$ownerSubject = '';
+$ownerTemplate = '';
 $ownerUseHTMLEmail = false;
+
+$clientHeaders = '';
+$clientTemplate = '';
+$clientUseHTMLEmail = false;
 
 //form submitted
 if(isset($_GET['edit_id']) && isset($_POST["frm-sbmt"])){
@@ -79,6 +82,10 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 
 		$clientUseHTMLEmail = $emailSettings->clientUseHTMLEmail;
 		$ownerUseHTMLEmail = $emailSettings->ownerUseHTMLEmail;
+
+		$clientSubject = ((property_exists($emailSettings, 'clientSubject')) ? $emailSettings->clientSubject : '');
+		$ownerSubject = ((property_exists($emailSettings, 'ownerSubject')) ? $emailSettings->ownerSubject : '');
+
 
 		$ownerEmail = stripslashes($emailSettings->ownerEmail);
 	}
@@ -173,6 +180,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 									<form>
 										<table>
 											<tr>
+												<td><label>Label: </label></td><td><input type="text" name="label"/></td>
+											</tr>
+											<tr>
 												<td><label>Name: </label></td><td><input type="text" name="name"/></td>
 											</tr>
 											<tr>
@@ -198,6 +208,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								<div class="hcf-edit-box hcf-hidden">
 									<form>
 										<table>
+											<tr>
+												<td><label>Label: </label></td><td><input type="text" name="label"/></td>
+											</tr>
 											<tr>
 												<td><label>Name: </label></td><td><input type="text" name="name"/></td>
 											</tr>
@@ -227,6 +240,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 									<form>
 										<table>
 											<tr>
+												<td><label>Label: </label></td><td><input type="text" name="label"/></td>
+											</tr>
+											<tr>
 												<td><label>Name: </label></td><td><input type="text" name="name"/></td>
 											</tr>
 											<tr>
@@ -252,6 +268,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								<div class="hcf-edit-box hcf-hidden">
 									<form>
 										<table>
+											<tr>
+												<td><label>Label: </label></td><td><input type="text" name="label"/></td>
+											</tr>
 											<tr>
 												<td><label>Name: </label></td><td><input type="text" name="name"/></td>
 											</tr>
@@ -280,6 +299,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								<div class="hcf-edit-box hcf-hidden">
 									<form>
 										<table>
+											<tr>
+												<td><label>Label: </label></td><td><input type="text" name="label"/></td>
+											</tr>
 											<tr>
 												<td><label>Name: </label></td><td><input type="text" name="name"/></td>
 											</tr>
@@ -340,7 +362,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 						<table id="form-elements">
 							<?php if($newForm): ?>
 							<tr>
-								<td class="name">name</td>
+								<td class="name">Your Name</td>
 								<td class="hcf-text-box">Textbox</td>
 								<td class="actions">
 									<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -348,6 +370,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 									<div class="hcf-edit-box hcf-hidden">
 										<form>
 											<table>
+												<tr>
+													<td><label>Label: </label></td><td><input type="text" name="label" value="Your Name"/></td>
+												</tr>
 												<tr>
 													<td><label>Name: </label></td><td><input type="text" name="name" value="name"/></td>
 												</tr>
@@ -366,7 +391,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								</td>
 							</tr>
 							<tr>
-								<td class="name">email</td>
+								<td class="name">Your Email</td>
 								<td class="hcf-email-box">Email</td>
 								<td class="actions">
 									<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -374,6 +399,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 									<div class="hcf-edit-box hcf-hidden">
 										<form>
 											<table>
+												<tr>
+													<td><label>Label: </label></td><td><input type="text" name="label" value="Your Email"/></td>
+												</tr>
 												<tr>
 													<td><label>Name: </label></td><td><input type="text" name="name" value="email"/></td>
 												</tr>
@@ -395,13 +423,16 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								</td>
 							</tr>
 							<tr>
-								<td class="name">enquiry</td>
+								<td class="name">Your Message</td>
 								<td class="hcf-textarea">Textarea</td>
 								<td class="actions">
 									<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
 									<div class="hcf-edit-box hcf-hidden">
 										<form>
 											<table>
+												<tr>
+													<td><label>Label: </label></td><td><input type="text" name="label" value="Your Message"/></td>
+												</tr>
 												<tr>
 													<td><label>Name: </label></td><td><input type="text" name="name" value="enquiry"/></td>
 												</tr>
@@ -426,7 +457,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 								</td>
 							</tr>
 							<tr>
-								<td class="name">&nbsp;</td>
+								<td class="name">Send</td>
 								<td class="hcf-submit">Submit Button</td>
 								<td class="actions">
 									<span class="edit"><a href="edit" class="hcf-edit">Edit</a>&nbsp;|&nbsp;</span><span class="trash"><a href="remove" class="hcf-remove">Remove</a></span>
@@ -440,7 +471,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 													<td><label>Class: </label></td><td><input type="text" name="class"/></td>
 												</tr>
 												<tr>
-													<td><label>Value: </label></td><td><input type="text" name="value" value="Send Enquiry"/></td>
+													<td><label>Value: </label></td><td><input type="text" name="value" value="Send"/></td>
 												</tr>
 												<tr>
 													<td><label>Use CAPTCHA: </label></td><td><input type="checkbox" name="captcha" checked="checked"/></td>
@@ -481,6 +512,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 					<?php endif; ?>
 					<h3>Headers (Advanced - Leave blank if unsure)</h3>
 					<textarea size="50" rows="6"  style="width: 100%" name="clientHeaders" id="clientHeaders"><?php echo $clientHeaders; ?></textarea><br/>
+					<label for="clientSubject">Subject Line:</label><input type="text" size="50" style="width: 100%" name="clientSubject" id="clientSubject" value="<?php echo (($newForm) ? 'Submission Confirmation' : $clientSubject); ?>" /><br/>
 					<label for="clientUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="clientUseHTMLEmail" id="clientUseHTMLEmail" <?php echo (($clientUseHTMLEmail) ? 'checked="checked"' : ''); ?> />
 				</div>
 			</div>
@@ -493,9 +525,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 					<h3>Email Template</h3>
 					<?php if($newForm): ?>
 						<textarea size="50" rows="6" style="width: 100%" name="ownerTemplate" id="ownerTemplate">Contact form submission
-Name: [name]
-Email: [email]
-Enquiry:
+Your Name: [name]
+Your Email: [email]
+Your Message:
 [enquiry]</textarea><br/>
 					<?php else: ?>
 
@@ -503,7 +535,8 @@ Enquiry:
 					<?php endif; ?>
 					<h3>Headers (Advanced - Leave blank if unsure)</h3>
 					<textarea size="50" rows="6"  style="width: 100%" name="ownerHeaders" id="ownerHeaders"><?php echo $ownerHeaders; ?></textarea>
-					<label for="owner-email">Email Address:</label><input type="text" size="50" style="width: 100%" name="ownerEmail" id="ownerEmail" value="<?php echo (($newForm) ? 'you@example.com' : $ownerEmail); ?>" /><br/>
+					<label for="ownerSubject">Subject Line:</label><input type="text" size="50" style="width: 100%" name="ownerSubject" id="ownerSubject" value="<?php echo (($newForm) ? 'New Contact Form Submission' : $ownerSubject); ?>" /><br/>
+					<label for="ownerEmail">Email Address:</label><input type="text" size="50" style="width: 100%" name="ownerEmail" id="ownerEmail" value="<?php echo (($newForm) ? 'you@example.com' : $ownerEmail); ?>" /><br/>
 					<label for="ownerUseHTMLEmail">Send HTML Email:&nbsp;</label><input type="checkbox" name="ownerUseHTMLEmail" id="ownerUseHTMLEmail" <?php echo (($ownerUseHTMLEmail) ? 'checked="checked"' : ''); ?> />
 				</div>
 			</div>
