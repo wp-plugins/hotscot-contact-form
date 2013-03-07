@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.8
+Version: 0.9
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -308,7 +308,7 @@ function hcf_displayFormElement($formElement, $postdata){
 
 	switch ($formElement->elementType) {
 		case 'text':
-			$html .= '<label class="hcf-label hcf-label-text">' . $formElement->elementName . ':</label>';
+			$html .= '<label class="hcf-label hcf-label-text">' .  ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ':</label>';
 			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
 			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ((isset($postdata[$formElement->elementName])) ? ' value="' . stripslashes($postdata[$formElement->elementName]) . '"' : '') . '/>';
 			break;
@@ -317,7 +317,7 @@ function hcf_displayFormElement($formElement, $postdata){
 			if($formElement->sendFormToThisAddress){
 				$html .= '<input type="hidden" name="clientemail[]"	value="' . $formElement->elementName . '" />';
 			}
-			$html .= '<label class="hcf-label hcf-label-email">' . $formElement->elementName . ':</label>';
+			$html .= '<label class="hcf-label hcf-label-email">' . ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ':</label>';
 			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') .  ((isset($postdata[$formElement->elementName])) ? ' value="' . stripslashes($postdata[$formElement->elementName]) . '"' : '') . ' />';
 			break;
 		case 'submit':
@@ -359,7 +359,7 @@ function hcf_displayFormElement($formElement, $postdata){
 			break;
 		case 'select':
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
-				$html .= '<label class="hcf-label hcf-label-select">' . $formElement->elementName . ':</label>';
+				$html .= '<label class="hcf-label hcf-label-select">' . ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ':</label>';
 				$html .= '<select' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>';
 				$html .= '<option value="-1">Please Select...</option>';
 				if(strpos($formElement->elementOptions, ',')){
@@ -375,7 +375,7 @@ function hcf_displayFormElement($formElement, $postdata){
 			break;
 		case 'textarea':
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
-				$html .= '<label class="hcf-label hcf-label-textarea">' . $formElement->elementName . ': </label>';
+				$html .= '<label class="hcf-label hcf-label-textarea">' . ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ': </label>';
 				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>' . ((isset($postdata[$formElement->elementName])) ? stripslashes($postdata[$formElement->elementName]) : '').'</textarea>';
 			break;
 	}

@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.4.2
-Stable tag: 0.8
+Stable tag: 0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,9 @@ Here you can use the standard email headers accepted by the php mail() function 
 n/a
 
 == Changelog ==
+
+= 0.9 =
+* fixed: front-end label display
 
 = 0.8 =
 * new: labels
@@ -59,6 +62,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+
+= 0.9 =
+* fixed: front-end label display
 
 = 0.8 =
 * new: labels
