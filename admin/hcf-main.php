@@ -49,7 +49,7 @@
 			        		<td><?php echo stripslashes($formSettings->formName); ?></td>
 			        		<td align="right">
 								<a href="<?php echo $baseurl; ?>&amp;edit_id=<?php echo $form->id; ?>">Edit</a>&nbsp;&nbsp;|&nbsp;
-							    <a href="<?php echo $baseurl; ?>&amp;del_sub_id=<?php echo $form->id; ?>">Delete</a>&nbsp;&nbsp;|&nbsp;
+							    <a href="JavaScript:del_itm('<?php echo $form->id; ?>','<?php echo stripslashes($formSettings->formName); ?>');">Delete</a>&nbsp;&nbsp;|&nbsp;
 							    <a href="<?php echo $baseurl; ?>&amp;view_form_sub_id=<?php echo $form->id; ?>">Entries(<?php echo $form->entries; ?>)</a>
 							</td>
 			        	</tr>
@@ -58,3 +58,10 @@
 			</table>
 	<?php endif; ?>
 </div>
+<script type="text/javascript">
+	function del_itm(val,name){
+        if(confirm('Are you sure you want to delete form: "' + name + '"? This will also delete ALL entries belonging to it!')){
+            window.location="<?php echo str_ireplace('&amp;','&',$baseurl); ?>&del_sub_id=" + val;
+        }
+	}
+</script>

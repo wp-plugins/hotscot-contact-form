@@ -32,6 +32,9 @@ n/a
 
 == Changelog ==
 
+= 0.9.3 =
+* fixed: Delete confirmation on all remove links,
+
 = 0.9.2 =
 * fixed: redirect link
 
@@ -68,6 +71,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+
+= 0.9.3 =
+* fixed: Delete confirmation on all remove links,
 
 = 0.9.2 =
 * fixed: redirect link

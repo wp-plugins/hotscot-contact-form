@@ -195,13 +195,15 @@ function setupMiscClickHandlers(){
     //Form element "Remove" link click handler
     jQuery(document).on('click', 'a.hcf-remove', function(event){
         event.preventDefault();
-        //Remove the desired form element
-        jQuery(this).parents('tr').remove();
+        if(confirm("Delete field?")){
+	        //Remove the desired form element
+	        jQuery(this).parents('tr').remove();
 
-        //If there are no more form elements, add in the placeholder
-        if(jQuery('#form-elements tr').size() == 0){
-            jQuery('#form-elements').html('<tr><td colspan="3">Drag form elements here</td></tr>');
-        }
+	        //If there are no more form elements, add in the placeholder
+	        if(jQuery('#form-elements tr').size() == 0){
+	            jQuery('#form-elements').html('<tr><td colspan="3">Drag form elements here</td></tr>');
+	        }
+	    }
     });
 
     //make sure that all form submit buttons don't actually submit
