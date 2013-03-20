@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.9.3
+Version: 0.9.4
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -64,7 +64,7 @@ add_action('template_redirect', 'redirect_custom_urls');
 //Dashboard setup
 add_action('wp_dashboard_setup', 'hcf_add_dashboard_widget');
 
-session_start();
+if(!isset($_SESSION)) session_start();
 
 /**
  * Checks if we need to update the db schema
@@ -767,7 +767,6 @@ function hcf_display_form($atts){
  */
 function hcf_build_admin_menu(){
     $user_capability = 'manage_options';
-    $menu_position = 26; //place menu just below the comments(25) menu option
 
     //Add main admin menu page
     add_menu_page( 'Contact Forms'  ,
@@ -775,8 +774,7 @@ function hcf_build_admin_menu(){
                    $user_capability ,
                    'hcf_contact' ,
                    'hcf_contact' ,
-                   plugins_url( 'images/icon.png' , __FILE__ ) ,
-                   $menu_position
+                   plugins_url( 'images/icon.png' , __FILE__ )
                  );
 
     //Add view events page to main admin menu.
