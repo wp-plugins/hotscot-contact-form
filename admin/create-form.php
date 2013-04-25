@@ -18,6 +18,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0) $newForm = false;
 $name = '';
 $data = '';
 $thankspage = '';
+$style = '';
 
 $ownerHeaders = '';
 $ownerEmail = '';
