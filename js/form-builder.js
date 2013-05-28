@@ -34,6 +34,12 @@ function parseCreatedForm(){
 		        }else{
 		            elem.isElementRequired = false;
 		        }
+		        nolinksTickbox = jQuery(value).find('input[name="nolinks"]');
+		        if( (nolinksTickbox.attr('checked') !== undefined) && (nolinksTickbox.attr('checked') == "checked") ){
+		            elem.nolinks = true;
+		        }else{
+		            elem.nolinks = false;
+		        }
         		break;
         	case 'hcf-email-box':
         		elem.elementType = "email";
@@ -80,11 +86,19 @@ function parseCreatedForm(){
         		elem.elementRows = jQuery(value).find('input[name="rows"]').val()  || '';
         		elem.elementCols = jQuery(value).find('input[name="cols"]').val()  || '';
         		//Note to self: children() is only 1 level down, find() can traverse down multiple levels to select descendant elements (grandchildren, etc.)
+
         		requiredTickbox = jQuery(value).find('input[name="required"]');
         		if( (requiredTickbox.attr('checked') !== undefined) && (requiredTickbox.attr('checked') == "checked") ){
 		            elem.isElementRequired = true;
 		        }else{
 		            elem.isElementRequired = false;
+		        }
+
+		        nolinksTickbox = jQuery(value).find('input[name="nolinks"]');
+		        if( (nolinksTickbox.attr('checked') !== undefined) && (nolinksTickbox.attr('checked') == "checked") ){
+		            elem.nolinks = true;
+		        }else{
+		            elem.nolinks = false;
 		        }
         		break;
         	case 'hcf-submit':
@@ -116,7 +130,7 @@ function parseCreatedForm(){
  * Setup the daggable/droppable form elaments
  */
 function setupFormElements(){
-    jQuery( "#control-list tr" ).draggable({
+    jQuery( "#control-list>tr" ).draggable({
         appendTo: "body",
         helper: "clone"
     });
@@ -140,7 +154,7 @@ function setupFormElements(){
 		return ui;
 	};
 
-	jQuery("#form-elements tbody").sortable({
+	jQuery("#form-elements>tbody").sortable({
         placeholder: "ui-state-highlight",
         helper: fixHelper,
         sort: function(){

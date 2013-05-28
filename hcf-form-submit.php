@@ -22,21 +22,49 @@
 			}
 		}
 
+		//Extract form ID
+		$form_id = $_POST['form_id'];
+		unset($_POST['form_id']);
+
+		//Extract any email addresses
+		if(isset($_POST['clientemail'])){
+			$clientemail = $_POST['clientemail'];
+			unset($_POST['clientemail']);
+		}
+
+		//Extract submission
+		$submission = json_encode($_POST);
+
+		//Next pull out the form elements and validate the form
+		$qry = "SELECT * FROM " . $wpdb->prefix . HCF_FORM_TABLE_NAME . " WHERE id = $form_id";
+    	$form = $wpdb->get_row($qry);
+
+    	foreach(json_decode($form->form_data) as $element){
+    		//Check for required fields
+    		if(property_exists($element, 'isElementRequired') && $element->isElementRequired){
+    			if(!isset($_POST[$element->elementName]) || $_POST[$element->elementName] == ''){
+    				if(strpos($_SERVER['HTTP_REFERER'], '?')){
+						$chkfrm = "&hcferror=required";
+					}else{
+						$chkfrm = "?hcferror=required";
+					}
+    			}
+    		}
+
+    		//check for links, if not allowed and are found, invalidate the form.
+    		if(property_exists($element, 'nolinks') && $element->nolinks){
+    			if(isset($_POST[$element->elementName]) && preg_match('#((https?:\/\/)|(www))[^\s]*#', $_POST[$element->elementName])){
+    				if(strpos($_SERVER['HTTP_REFERER'], '?')){
+						$chkfrm = "&hcferror=nolinks";
+					}else{
+						$chkfrm = "?hcferror=nolinks";
+					}
+    			}
+    		}
+    	}
+
+    	//If everything is ok, save form to DB and send emails (if req'd).
 		if($chkfrm == ''){
-			/** Save Form **/
-			//Extract form ID
-			$form_id = $_POST['form_id'];
-			unset($_POST['form_id']);
-
-			//Extract any email addresses
-			if(isset($_POST['clientemail'])){
-				$clientemail = $_POST['clientemail'];
-				unset($_POST['clientemail']);
-			}
-
-			//Extract submission
-			$submission = json_encode($_POST);
-
 			//Save to database
 			$wpdb->insert($entry_table_name,
 						  array('form_id' => $form_id,
@@ -50,7 +78,7 @@
 			$theForm = json_decode(stripslashes($row->form_data));
 
 
-			if(! is_null($emailSettings)){
+			if(!is_null($emailSettings)){
 				$postVars = $_POST;
 
 				//check that the email templates are set then send emails
@@ -79,15 +107,12 @@
 				}
 			}
 
-			/** Redirect **/
-
+			//Redirect to form submission page
 			$redirectURL = get_bloginfo('url');
-
 			$formSettings = json_decode(stripslashes($row->form_settings));
 
-
 			header('Location: ' . get_page_link($formSettings->thanksPage)  . '?hcf-success=1');
-		}else{ //error
+		}else{ //There has been an error, redirect back to the form.
 			$_SESSION['post_data'] = $_POST;
 			if(preg_match('#(\?|\&)hcferror\=captcha#', $_SERVER['HTTP_REFERER'])){
 				header('Location: ' . $_SERVER['HTTP_REFERER'] . "#form-" . $_POST['form_id']);

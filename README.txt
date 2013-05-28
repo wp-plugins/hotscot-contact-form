@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.5.1
-Stable tag: 0.9.4
+Stable tag: 0.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,10 @@ Here you can use the standard email headers accepted by the php mail() function 
 n/a
 
 == Changelog ==
+
+= 0.9.5 =
+* Added: Ability to disallow links on text inputs to avoid spammers.
+
 = 0.9.4 =
 * fixed: session and menu
 
@@ -73,6 +77,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+
+= 0.9.5 =
+Added the ability to disallow links on text inputs to avoid spammers.
 
 = 0.9.4 =
 * fixed: session and menu

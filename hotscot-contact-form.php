@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.9.4
+Version: 0.9.5
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -309,7 +309,7 @@ function hcf_displayFormElement($formElement, $postdata){
 	switch ($formElement->elementType) {
 		case 'text':
 			$html .= '<label class="hcf-label hcf-label-text">' .  ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ':</label>';
-			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+			$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . (($formElement->nolinks) ? 'hcf_nolinks ' : '') . $formElement->elementClass;
 			$html .= '<input type="text"' . (($formElement->elementName == '') ? '' : ' name="' . $formElement->elementName . '"') . (($elementClasses == '') ? '' : ' class="' . $elementClasses . '"') . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . ((isset($postdata[$formElement->elementName])) ? ' value="' . stripslashes($postdata[$formElement->elementName]) . '"' : '') . '/>';
 			break;
 		case 'email':
@@ -374,7 +374,7 @@ function hcf_displayFormElement($formElement, $postdata){
 				$html .= "</select>";
 			break;
 		case 'textarea':
-				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . (($formElement->nolinks) ? 'hcf_nolinks ' : '') . $formElement->elementClass;
 				$html .= '<label class="hcf-label hcf-label-textarea">' . ((property_exists($formElement, 'elementLabel')) ? $formElement->elementLabel : $formElement->elementName) . ': </label>';
 				$html .= '<textarea' . (($formElement->elementRows == '') ? ' rows="8"': ' rows="' . $formElement->elementRows . '"') . (($formElement->elementCols == '') ? ' cols="31"': ' cols="' . $formElement->elementCols . '"'). (($formElement->elementName == '') ? '': 'name="' . $formElement->elementName . '"') . (($elementClasses =='') ? '' : ' class="' .$elementClasses . '"' ) . (($formElement->elementID != '') ? ' id="' . $formElement->elementID . '"' : '') . '>' . ((isset($postdata[$formElement->elementName])) ? stripslashes($postdata[$formElement->elementName]) : '').'</textarea>';
 			break;
@@ -416,6 +416,9 @@ function hcf_admin_displayFormElement($formElement){
 								</tr>
 								<tr>
 									<td><label>Class: </label></td><td><input type="text" name="class" value="<?php echo $formElement->elementClass; ?>"/></td>
+								</tr>
+								<tr>
+									<td><label>Disallow Links: </label></td><td><input type="checkbox" name="nolinks" <?php if($formElement->nolinks) echo 'checked="checked"'; ?>/></td>
 								</tr>
 								<tr>
 									<td><label>Required: </label></td><td><input type="checkbox" name="required" <?php if($formElement->isElementRequired) echo 'checked="checked"'; ?>/></td>
@@ -596,7 +599,10 @@ function hcf_admin_displayFormElement($formElement){
 									<td><label>Class: </label></td><td><input type="text" name="class" value="<?php echo $formElement->elementClass; ?>"/></td>
 								</tr>
 								<tr>
-									<td><label>Required: </label></td><td><input type="checkbox" name="required"/></td>
+									<td><label>Disallow Links: </label></td><td><input type="checkbox" name="nolinks" <?php if($formElement->nolinks) echo 'checked="checked"'; ?>/></td>
+								</tr>
+								<tr>
+									<td><label>Required: </label></td><td><input type="checkbox" name="required" <?php if($formElement->isElementRequired) echo 'checked="checked"'; ?>/></td>
 								</tr>
 							</table>
 						</form>
@@ -731,9 +737,21 @@ function hcf_display_form($atts){
     //Build up form html
     $formHTML = '';
 
-    if(isset($_GET['hcferror']) && $_GET['hcferror'] == 'captcha'){
+    if(isset($_GET['hcferror'])){
+		switch ($_GET['hcferror']) {
+			case 'captcha':
+				$err = 'Invalid CAPTCHA code.';
+				break;
+			case 'required':
+				$err = 'Please fill in all the fields.';
+				break;
+			case 'nolinks':
+				$err = 'Links are not allowed to be submitted on this form.';
+				break;
+		}
+
     	$formHTML .= "<a name=\"form-$id\"></a>";
-    	$formHTML .= '<div class="hcf-error"><p><strong>Error:</strong> Invalid CAPTCHA code</p></div>';
+    	$formHTML .= '<div class="hcf-error"><p><strong>Error:</strong> ' . $err . '</p></div>';
     }
 
     $formHTML .= '<form class="hcf-form" method="post" action="'. get_bloginfo('url') . '/hcf-form-submit/">';
