@@ -193,6 +193,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 												<td><label>Class: </label></td><td><input type="text" name="class"/></td>
 											</tr>
 											<tr>
+												<td><label>Disallow Links: </label></td><td><input type="checkbox" name="nolinks"/></td>
+											</tr>
+											<tr>
 												<td><label>Required: </label></td><td><input type="checkbox" name="required"/></td>
 											</tr>
 										</table>

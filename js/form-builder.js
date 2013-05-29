@@ -130,12 +130,12 @@ function parseCreatedForm(){
  * Setup the daggable/droppable form elaments
  */
 function setupFormElements(){
-    jQuery( "#control-list>tr" ).draggable({
+    jQuery( "#control-list>tbody>tr" ).draggable({
         appendTo: "body",
         helper: "clone"
     });
 
-    jQuery( "#form-elements " ).droppable({
+    jQuery( "#form-elements").droppable({
         activeClass: "ui-state-highlight",
         hoverClass: "ui-state-highlight",
         accept: ":not(.ui-sortable-helper)",
