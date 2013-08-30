@@ -51,6 +51,15 @@ jQuery(document).ready(function(){
     		}
     	});
 
+        //If all fields havent been filled in, show error msg
+        if(!isValid){
+            if(jQuery('.hcf-error').length == 0){
+                jQuery(this).before('<div class="hcf-error"><p><strong>Error:</strong> Please fill in all required fields.</p></div>');
+            }else{
+                jQuery('.hcf-error p').html('<strong>Error:</strong> Please fill in all required fields.');
+            }
+        }
+
     	return isValid;
     });
 });
