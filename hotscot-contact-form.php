@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.9.8
+Version: 0.9.9
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -181,7 +181,7 @@ function hcf_dashboard_widget(){
 			?>
 			<tr>
 				<td><?php echo $sub->date_submitted; ?></td>
-				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>&sub_id=<?php echo $sub->sub_id; ?>"><?php echo hcf_html_format_submission(stripslashes($sub->submission), true); ?></td>
+				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>&sub_id=<?php echo $sub->sub_id; ?>"><?php echo stripslashes(hcf_html_format_submission($sub->submission, true)); ?></td>
 				<td><a href="admin.php?page=hcf_contact&view_form_sub_id=<?php echo $sub->form_id; ?>"><?php echo $formSettings->formName; ?></td>
 
 			</tr>
@@ -223,7 +223,14 @@ function hcf_redirect_backtobase($url){
 function hcf_html_format_submission($strippedSubmission, $firstOnly = false, $charCutoff = 100){
 	$formattedSubmission = '';
 
+    //$strippedSubmission = str_replace("\'", "''", $strippedSubmission);
 	$formFields = json_decode($strippedSubmission);
+
+    //var_dump($strippedSubmission);
+    if(is_null($formFields)){
+        //exit();
+        var_dump($strippedSubmission);
+    }
 
 	$fieldCount = 0;
 
@@ -286,7 +293,7 @@ function hcf_get_form_submission_fields($formID){
 
 	if($res){
 		foreach ($res as $row) {
-			foreach (json_decode(stripslashes($row->submission)) as $k => $v) {
+			foreach (json_decode($row->submission) as $k => $v) {
 
 				if(!in_array($k, $fieldList)) $fieldList[] = "$k";
 			}

@@ -139,9 +139,9 @@
 					<tr>
 						<td><input type="checkbox" class="massdelete" name="selected[]" value="<?php echo $submission->id; ?>"></td>
 						<td><?php echo date('d/m/Y H:i', strtotime($submission->date_submitted)); ?></td>
-						<td><?php echo hcf_html_format_submission(stripslashes($submission->submission), $firstOnly = true); ?>
+						<td><?php echo stripslashes(hcf_html_format_submission($submission->submission, $firstOnly = true)); ?>
 						</td>
-						<td><?php echo hcf_html_format_submission(stripslashes($submission->submission), $firstOnly = false); ?></td>
+						<td><?php echo stripslashes(hcf_html_format_submission($submission->submission, $firstOnly = false)); ?></td>
 						<td align="right">
 							<a href="<?php echo $url; ?>&amp;sub_id=<?php echo $submission->id; ?>">View</a>&nbsp;&nbsp;|&nbsp;
 						    <a href="Javascript:del_itm(<?php echo $submission->id; ?>)">Delete</a>

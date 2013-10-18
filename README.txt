@@ -3,8 +3,8 @@ Contributors: huntlyc,DaganLev
 Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
-Tested up to: 3.5.1
-Stable tag: 0.9.8
+Tested up to: 3.6.1
+Stable tag: 0.9.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,9 @@ Here you can use the standard email headers accepted by the php mail() function 
 n/a
 
 == Changelog ==
+= 0.9.9 =
+* Fix: Broken admin entries (stripslash fix)
+
 = 0.9.8 =
 * New: Show error message on mandatory fields not being filled in
 
@@ -85,6 +88,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+= 0.9.9 =
+* Fix: Broken admin entries (stripslash fix)
+
 = 0.9.8 =
 * New: Show error message on mandatory fields not being filled in
 

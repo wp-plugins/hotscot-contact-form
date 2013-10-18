@@ -47,7 +47,7 @@ if (current_user_can('manage_options')){
 					echo reportsFormatCSV($itm->id) . ",";
 					echo reportsFormatCSV($itm->date_submitted) . ",";
 
-					$submissionFields = json_decode(stripslashes($itm->submission));
+					$submissionFields = json_decode($itm->submission);
 					$submissionStr = '';
 
 					//check through our submission for each of the required fields
