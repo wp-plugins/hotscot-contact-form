@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 3.6.1
-Stable tag: 0.9.9
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,9 @@ Here you can use the standard email headers accepted by the php mail() function 
 n/a
 
 == Changelog ==
+= 1.0 =
+* Fix: Checkbox issues
+
 = 0.9.9 =
 * Fix: Broken admin entries (stripslash fix)
 
@@ -88,6 +91,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+= 1.0 =
+* Fix: Checkbox issues
+
 = 0.9.9 =
 * Fix: Broken admin entries (stripslash fix)
 

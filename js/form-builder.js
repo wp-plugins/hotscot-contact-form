@@ -116,7 +116,7 @@ function parseCreatedForm(){
 
         //Generic information for all form elements
         //Note: we are triming the id and name to avoid spaces, you're on your own with classes and lebels
-        elem.elementID = jQuery.trim(jQuery(value).find('input[name="id"]').val().trim()) || '';
+        elem.elementID = jQuery.trim(jQuery(value).find('input[name="id"]').val()) || '';
         elem.elementName = jQuery.trim(jQuery(value).find('input[name="name"]').val())  || '';
         elem.elementClass = jQuery(value).find('input[name="class"]').val() || '';
         elem.elementLabel = jQuery(value).find('input[name="label"]').val()  || '';

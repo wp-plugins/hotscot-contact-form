@@ -40,27 +40,44 @@
     	$form = $wpdb->get_row($qry);
 
     	foreach(json_decode($form->form_data) as $element){
-    		//Check for required fields
-    		if(property_exists($element, 'isElementRequired') && $element->isElementRequired){
-    			if(!isset($_POST[$element->elementName]) || $_POST[$element->elementName] == ''){
-    				if(strpos($_SERVER['HTTP_REFERER'], '?')){
-						$chkfrm = "&hcferror=required";
-					}else{
-						$chkfrm = "?hcferror=required";
-					}
-    			}
-    		}
 
-    		//check for links, if not allowed and are found, invalidate the form.
-    		if(property_exists($element, 'nolinks') && $element->nolinks){
-    			if(isset($_POST[$element->elementName]) && preg_match('#((https?:\/\/)|(www))[^\s]*#', $_POST[$element->elementName])){
-    				if(strpos($_SERVER['HTTP_REFERER'], '?')){
-						$chkfrm = "&hcferror=nolinks";
-					}else{
-						$chkfrm = "?hcferror=nolinks";
-					}
-    			}
-    		}
+
+
+            if(property_exists($element, 'elementType') && $element->elementType !== 'checkbox'){
+        		//Check for required fields
+        		if(property_exists($element, 'isElementRequired') && $element->isElementRequired){
+        			if(!isset($_POST[$element->elementName]) || $_POST[$element->elementName] == ''){
+        				if(strpos($_SERVER['HTTP_REFERER'], '?')){
+    						$chkfrm = "&hcferror=required";
+    					}else{
+    						$chkfrm = "?hcferror=required";
+    					}
+        			}
+        		}
+            }else if(property_exists($element, 'elementType') && $element->elementType == 'checkbox'){
+                if(property_exists($element, 'isElementRequired') && $element->isElementRequired){
+                    //Special case for checkboxes if required
+                    if(!isset($_POST[$element->elementName])){
+                        if(strpos($_SERVER['HTTP_REFERER'], '?')){
+                            $chkfrm = "&hcferror=required";
+                        }else{
+                            $chkfrm = "?hcferror=required";
+                        }
+                    }
+                }
+            }
+
+
+            //check for links, if not allowed and are found, invalidate the form.
+            if(property_exists($element, 'nolinks') && $element->nolinks){
+                if(isset($_POST[$element->elementName]) && preg_match('#((https?:\/\/)|(www))[^\s]*#', $_POST[$element->elementName])){
+                    if(strpos($_SERVER['HTTP_REFERER'], '?')){
+                        $chkfrm = "&hcferror=nolinks";
+                    }else{
+                        $chkfrm = "?hcferror=nolinks";
+                    }
+                }
+            }
     	}
 
     	//If everything is ok, save form to DB and send emails (if req'd).

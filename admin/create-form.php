@@ -389,6 +389,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 												<tr>
 													<td><label>Class: </label></td><td><input type="text" name="class"/></td>
 												</tr>
+                                                <tr>
+                                                    <td><label>Disallow Links: </label></td><td><input type="checkbox" name="nolinks"/></td>
+                                                </tr>
 												<tr>
 													<td><label>Required: </label></td><td><input type="checkbox" name="required"/></td>
 												</tr>
@@ -422,7 +425,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 													<td><label>Required: </label></td><td><input type="checkbox" name="required" checked="checked" disabled="true"/></td>
 												</tr>
 												<tr>
-													<td><label>Send Email: </label></td><td><input type="checkbox" name="clientemail" checked="checked"/></td>
+													<td><label>Send "Client Email Template"?: </label></td><td><input type="checkbox" name="clientemail" checked="checked"/></td>
 												</tr>
 											</table>
 										</form>
@@ -455,6 +458,9 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 												<tr>
 													<td><label>Class: </label></td><td><input type="text" name="class"/></td>
 												</tr>
+                                                <tr>
+                                                    <td><label>Disallow Links: </label></td><td><input type="checkbox" name="nolinks"/></td>
+                                                </tr>
 												<tr>
 													<td><label>Required: </label></td><td><input type="checkbox" name="required" checked="checked"/></td>
 												</tr>
@@ -513,7 +519,7 @@ if(isset($_GET["edit_id"]) && $_GET["edit_id"] != 0){
 				<div class="inside">
 					<h3>Email Template</h3>
 					<?php if($newForm): ?>
-						<textarea size="50" rows="6" style="width: 100%" name="clientTemplate" id="clientTemplate">Hi [name], thankyou for your enquiry. </textarea>
+						<textarea size="50" rows="6" style="width: 100%" name="clientTemplate" id="clientTemplate">Hi [name], thank you for getting in touch. Your contact form submission has been received.</textarea>
 					<?php else: ?>
 						<textarea size="50" rows="6"  style="width: 100%" name="clientTemplate" id="clientTemplate"><?php echo $clientTemplate; ?></textarea>
 					<?php endif; ?>

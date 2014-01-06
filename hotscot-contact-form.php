@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 0.9.9
+Version: 1.0
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -95,10 +95,7 @@ function hcf_plugin_install(){
     $form_table_name = $wpdb->prefix . HCF_FORM_TABLE_NAME;
     $entry_table_name = $wpdb->prefix . HCF_SUBMISSION_TABLE_NAME;
 
-
-
     $dbv = get_site_option( 'hcf_db_version', '-1' );
-
 
     if(is_null($dbv)){
     	//New install
@@ -226,11 +223,6 @@ function hcf_html_format_submission($strippedSubmission, $firstOnly = false, $ch
     //$strippedSubmission = str_replace("\'", "''", $strippedSubmission);
 	$formFields = json_decode($strippedSubmission);
 
-    //var_dump($strippedSubmission);
-    if(is_null($formFields)){
-        //exit();
-        var_dump($strippedSubmission);
-    }
 
 	$fieldCount = 0;
 
@@ -344,7 +336,7 @@ function hcf_displayFormElement($formElement, $postdata){
 		case 'checkbox':
 			if(strpos($formElement->elementOptions, ',')){
 				$options = explode(',', $formElement->elementOptions);
-				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text ' : '') . $formElement->elementClass;
+				$elementClasses = $formElement->elementClass;
 
 				$count = 0;
 
@@ -352,16 +344,19 @@ function hcf_displayFormElement($formElement, $postdata){
 				$checkboxOptions = array();
 				if(isset($postdata['checkbox'])) $checkboxOptions = $postdata['checkbox'];
 
+
+                $html .= '<div class="check-group ' . (($formElement->isElementRequired) ? 'hcf_req_check ' : '') . '">';
 				foreach($options as $option){
 					$id = $formElement->elementName . ++$count;
 					$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
 					$html .= '<label for="' . $id . '" class="hcf-label hcf-label-checkbox">' . $option . '</label>';
-					$html .= '<input id="' . $id  . '" type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' value="' . $option . '"' . (in_array($option, $checkboxOptions) ? ' checked="checked"': '') . '/>';
+					$html .= '<input id="' . $id  . '" type="checkbox"' . (($formElement->elementName == '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ' value="' . $option . '"' . (in_array($option, $checkboxOptions) ? ' checked="checked"': '') . '/>';
 				}
+                $html .= '</div>';
 			}elseif($formElement->elementOptions != ''){ //Single option field (i.e terms and conditions)
 				$elementClasses = (($formElement->isElementRequired) ? 'hcf_req_text' : '') . $formElement->elementClass;
 				$html .= '<label class="hcf-label hcf-label-checkbox">' . $formElement->elementOptions . '</label>' ;
-				$html .= '<input type="checkbox"' . (($formElement->elementName != '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ((isset($postdata[$formElement->elementName])) ? ' checked="checked"': '') . ' />';
+				$html .= '<input type="checkbox"' . (($formElement->elementName == '') ? ' name="checkbox[]"' : ' name="' . $formElement->elementName . '[]"') . (($elementClasses == '') ? '': ' class="' . $elementClasses .'" ') . ((isset($postdata[$formElement->elementName])) ? ' checked="checked"': '') . ' />';
 			}
 			break;
 		case 'select':

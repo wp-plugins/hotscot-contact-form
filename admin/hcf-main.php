@@ -48,9 +48,9 @@
 			        	<tr>
 			        		<td><?php echo stripslashes($formSettings->formName); ?></td>
 			        		<td align="right">
-								<a href="<?php echo $baseurl; ?>&amp;edit_id=<?php echo $form->id; ?>">Edit</a>&nbsp;&nbsp;|&nbsp;
-							    <a href="JavaScript:del_itm('<?php echo $form->id; ?>','<?php echo stripslashes($formSettings->formName); ?>');">Delete</a>&nbsp;&nbsp;|&nbsp;
-							    <a href="<?php echo $baseurl; ?>&amp;view_form_sub_id=<?php echo $form->id; ?>">Entries(<?php echo $form->entries; ?>)</a>
+							    <a href="<?php echo $baseurl; ?>&amp;view_form_sub_id=<?php echo $form->id; ?>">View Entries (<?php echo $form->entries; ?>)</a>&nbsp;&nbsp;|&nbsp;
+                                <a href="<?php echo $baseurl; ?>&amp;edit_id=<?php echo $form->id; ?>">Edit Form</a>&nbsp;&nbsp;|&nbsp;
+                                <span class="trash"><a href="JavaScript:del_itm('<?php echo $form->id; ?>','<?php echo stripslashes($formSettings->formName); ?>');">Delete</a></span>
 							</td>
 			        	</tr>
 				    <?php endforeach; ?>
