@@ -17,7 +17,7 @@ if (current_user_can('manage_options')){
 			$reqFields = explode(', ', $_POST['export_fields']);
 
 			$currentFormSettings = json_decode(stripslashes($wpdb->get_var('SELECT form_settings FROM ' . $form_table_name . ' WHERE id = ' . $_POST['form_id'])));
-			$currentFormName = $currentFormSettings->formName;
+			$currentFormName = sanitize_title($currentFormSettings->formName);
 
 			// Output to browser with appropriate mime type, you choose ;)
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
