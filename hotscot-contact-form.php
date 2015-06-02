@@ -3,7 +3,7 @@
 Plugin Name: Hotscot Contact Form
 Plugin URI: http://wordpress.org/extend/plugins/hotscot-contact-form/
 Description: Simple to use contact form
-Version: 1.1
+Version: 1.2
 Author: Hotscot
 Author URI: http://www.hotscot.net/
 License: GPL2
@@ -321,11 +321,17 @@ function hcf_displayFormElement($formElement, $postdata){
 			break;
 		case 'submit':
 			if($formElement->useCaptcha){
-				$html .= '<label class="hcf-label hcf-label-checkbox">Code:</label>';
 
-				$html .= '<div class="hcf-captcha-wrap"><input type="text" name="captchacode" id="captchacode" />';
-				$html .= '<img src="'. get_bloginfo( 'url') . '/HCF_CAPTCHA/" class="hcf-captcha" alt="captcha_img" /></div>';
-				$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
+                if(get_option( 'hcf_use_recaptcha', 0) == 1  && get_option( 'hcf_recaptcha_site_key', '') != '' && get_option( 'hcf_recaptcha_secret_key', '') != ''){
+                    $html .= '<div class="g-recaptcha" data-sitekey="' . get_option( 'hcf_recaptcha_site_key', '') . '"></div>';
+                    $html .= '<div class="hcf-clear"><!-- clear form element --></div>';
+                }else{
+    				$html .= '<label class="hcf-label hcf-label-checkbox">Code:</label>';
+
+    				$html .= '<div class="hcf-captcha-wrap"><input type="text" name="captchacode" id="captchacode" />';
+    				$html .= '<img src="'. get_bloginfo( 'url') . '/HCF_CAPTCHA/" class="hcf-captcha" alt="captcha_img" /></div>';
+    				$html .= '<div class="hcf-clear"><!-- clear form element --></div>';
+                }
 			}else{
 				if(isset($_SESSION['captcha_key'])) unset($_SESSION['captcha_key']);
 			}
@@ -721,6 +727,11 @@ function hcf_display_form($atts){
     //Add validation script
     wp_enqueue_script('hcf-form', $src = WP_PLUGIN_URL . '/hotscot-contact-form/js/client-script.js' , $deps = array('jquery') );
 
+    //If using reCAPTCHA include the relevent js
+    if(get_option( 'hcf_use_recaptcha', 0) == 1  && get_option( 'hcf_recaptcha_site_key', '') != '' && get_option( 'hcf_recaptcha_secret_key', '') != ''){
+        wp_enqueue_script('hcf-recaptcha', 'https://www.google.com/recaptcha/api.js' );
+    }
+
     //Add basic styles
     switch ($formSettings->formStyle) {
     	case 'horizontal':
@@ -787,6 +798,8 @@ function hcf_display_form($atts){
  */
 function hcf_build_admin_menu(){
     $user_capability = 'manage_options';
+
+    add_options_page( 'Hotscot Contact Forms Settings', 'Hotscot Contact Forms', $user_capability, 'hcf-settings', 'hcf_settings');
 
     //Add main admin menu page
     add_menu_page( 'Contact Forms'  ,
@@ -1028,4 +1041,8 @@ function redirect_custom_urls(){
 	}
 }
 
+
+function hcf_settings(){
+    require_once 'admin/settings.php';
+}
 ?>

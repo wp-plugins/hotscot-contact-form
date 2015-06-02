@@ -4,7 +4,7 @@ Donate link: http://www.hotscot.net/
 Tags: contact,form,enquiries
 Requires at least: 3.4.2
 Tested up to: 4.2.1
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,10 @@ Here you can use the standard email headers accepted by the php mail() function 
 n/a
 
 == Changelog ==
+
+= 1.2 =
+* Added: Google reCAPTCA option instead of built-in captcha
+
 = 1.1 =
 * Fix: Export title fix for Firefox
 
@@ -94,6 +98,9 @@ n/a
 * initial build
 
 == Upgrade Notice ==
+= 1.2 =
+* Added: Google reCAPTCA option instead of built-in captcha
+
 = 1.1 =
 * Fix: Export title fix for Firefox
 

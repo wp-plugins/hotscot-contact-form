@@ -6,8 +6,24 @@
 
 	if(isset($_POST['form_id'])){
 		$chkfrm = '';
+
 		//First Check for captcha
-		if(isset($_SESSION['captcha_key'])){
+        if(get_option( 'hcf_use_recaptcha', 0) == 1  && get_option( 'hcf_recaptcha_site_key', '') != '' && get_option( 'hcf_recaptcha_secret_key', '') != ''){
+
+            if(!isset($_POST['g-recaptcha-response']) || $_POST['g-recaptcha-response'] == ''){
+                $chkfrm = "&hcferror=captcha";
+            }else{
+                $clientIP = $_SERVER['REMOTE_ADDR'];
+                $captchaURL = "https://www.google.com/recaptcha/api/siteverify?secret=" . get_option( 'hcf_recaptcha_secret_key', '') . "&response=" . $_POST['g-recaptcha-response'] . "&remoteip=" . $clientIP;
+                $captchaResult = json_decode(file_get_contents($captchaURL));
+            }
+
+            if(is_null($captchaResult) || $captchaResult == FALSE || !isset($captchaResult->success) || $captchaResult->success !== true){
+                 $chkfrm = "&hcferror=captcha";
+            }
+
+
+		}elseif(isset($_SESSION['captcha_key'])){
 			//Auto fail the captcha unless the code is correct
 			if(strpos($_SERVER['HTTP_REFERER'], '?')){
 				$chkfrm = "&hcferror=captcha";
