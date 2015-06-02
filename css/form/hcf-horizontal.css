@@ -1,0 +1,48 @@
+/** Basic styles for the horizontal form */
+.hcf-form input[type="text"],
+.hcf-form input[type="submit"],
+.hcf-form input[type="button"],
+.hcf-form select{
+	padding: 6px;
+}
+
+.hcf-form input[type="submit"]{
+	margin-bottom: 17px;
+	margin-left: 80px;
+}
+
+.hcf-form .hcf-label{
+	width: 80px;
+	float: left;
+	padding-top: 7px;
+}
+
+.hcf-form div.hcf-clear{
+	clear: both;
+	margin-bottom: 10px;
+}
+
+.hcf-form .hcf-label-textarea{
+	display: block !important;
+}
+
+.hcf-form img.hcf-captcha{
+	display: block;
+	float: left;
+}
+
+.hcf-form .hcf-captcha-wrap input{
+	float: left;
+}
+
+/** Error class **/
+div.hcf-error{
+	margin: 5px 0 15px;
+	background-color: #ffebe8;
+	border: 1px solid #c00;
+	padding: 6px;
+}
+
+div.hcf-error p{
+	margin-bottom: 0;
+}
